@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Users, 
   Vote, 
@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   AlertCircle,
   ArrowRight,
-  Play
+  History,
+  Info
 } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatsCard } from "@/components/StatsCard";
@@ -21,6 +22,7 @@ import { VoteConfirmationModal } from "@/components/VoteConfirmationModal";
 import { VoteSuccessAnimation } from "@/components/VoteSuccessAnimation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 import candidate1 from "@/assets/candidate-1.jpg";
 import candidate2 from "@/assets/candidate-2.jpg";
@@ -88,12 +90,20 @@ const mockCandidates = [
   },
 ];
 
+const votingHistory = [
+  { election: "Q3 Board Elections", date: "Oct 8, 2024", candidate: "John Smith", status: "completed" },
+  { election: "Annual General Meeting", date: "Sep 15, 2024", candidate: "Jane Doe", status: "completed" },
+  { election: "Community Vote 2024", date: "Aug 20, 2024", candidate: "Mike Johnson", status: "completed" },
+];
+
 export default function Dashboard() {
+  const { user } = useAuth();
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
+  const [votingStep, setVotingStep] = useState(1);
   const { toast } = useToast();
 
   const totalVotes = mockCandidates.reduce((acc, c) => acc + c.voteCount, 0);
@@ -101,7 +111,13 @@ export default function Dashboard() {
 
   const handleVoteConfirm = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    
+    // Step animation
+    setVotingStep(2);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setVotingStep(3);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
     setIsSubmitting(false);
     setShowConfirmation(false);
     setShowSuccess(true);
@@ -117,7 +133,7 @@ export default function Dashboard() {
   };
 
   return (
-    <DashboardLayout userRole="voter" userName="John Doe">
+    <DashboardLayout userRole="voter" userName={user?.name || "John Doe"}>
       <div className="space-y-8">
         {/* Welcome section */}
         <motion.div
@@ -127,17 +143,18 @@ export default function Dashboard() {
         >
           <div className="absolute inset-0 election-pattern opacity-50" />
           <div className="relative">
-            <h1 className="text-2xl font-bold text-white mb-2">Welcome back, John!</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">Welcome back, {user?.name?.split(" ")[0] || "Voter"}!</h1>
             <p className="text-white/80 mb-4">
               You have 1 active election available. Your vote matters - make it count!
             </p>
             <div className="flex items-center gap-4">
-              <Button variant="vote" size="lg">
+              <Button variant="vote" size="lg" onClick={() => document.getElementById("voting-section")?.scrollIntoView({ behavior: "smooth" })}>
                 <Vote className="w-5 h-5" />
                 Cast Your Vote
               </Button>
               <Button variant="glass">
-                View Election Details
+                <Info className="w-4 h-4 mr-2" />
+                Election Info
               </Button>
             </div>
           </div>
@@ -194,7 +211,7 @@ export default function Dashboard() {
         </section>
 
         {/* Voting section */}
-        <section>
+        <section id="voting-section">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-bold text-foreground">Cast Your Vote</h2>
@@ -210,6 +227,36 @@ export default function Dashboard() {
 
           {!hasVoted ? (
             <>
+              {/* Voting steps indicator */}
+              <div className="glass-card p-4 mb-6">
+                <div className="flex items-center justify-between">
+                  {["Select Candidate", "Review Choice", "Confirm Vote"].map((step, i) => (
+                    <div key={i} className="flex items-center">
+                      <div className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors",
+                        votingStep > i + 1 ? "bg-success text-white" :
+                        votingStep === i + 1 ? "bg-election-gold text-foreground" :
+                        "bg-secondary text-muted-foreground"
+                      )}>
+                        {votingStep > i + 1 ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+                      </div>
+                      <span className={cn(
+                        "ml-2 text-sm font-medium hidden sm:block",
+                        votingStep === i + 1 ? "text-foreground" : "text-muted-foreground"
+                      )}>
+                        {step}
+                      </span>
+                      {i < 2 && (
+                        <div className={cn(
+                          "w-12 lg:w-24 h-0.5 mx-4",
+                          votingStep > i + 1 ? "bg-success" : "bg-secondary"
+                        )} />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {mockCandidates.map((candidate) => (
                   <CandidateCard
@@ -223,26 +270,33 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              {selectedCandidate && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-center"
-                >
-                  <Button
-                    variant="vote"
-                    size="xl"
-                    onClick={() => setShowConfirmation(true)}
-                    className="min-w-[300px]"
+              <AnimatePresence>
+                {selectedCandidate && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className="flex justify-center"
                   >
-                    <Vote className="w-6 h-6" />
-                    Confirm Vote for {selectedCandidateData?.name}
-                  </Button>
-                </motion.div>
-              )}
+                    <Button
+                      variant="vote"
+                      size="xl"
+                      onClick={() => setShowConfirmation(true)}
+                      className="min-w-[300px]"
+                    >
+                      <Vote className="w-6 h-6" />
+                      Confirm Vote for {selectedCandidateData?.name}
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </>
           ) : (
-            <div className="text-center py-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-12"
+            >
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-success/10 flex items-center justify-center">
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
@@ -254,7 +308,7 @@ export default function Dashboard() {
                 View Live Results
                 <BarChart3 className="w-4 h-4 ml-2" />
               </Button>
-            </div>
+            </motion.div>
           )}
         </section>
 
@@ -293,7 +347,7 @@ export default function Dashboard() {
                       <img
                         src={candidate.photo}
                         alt={candidate.name}
-                        className="w-12 h-12 rounded-full object-cover"
+                        className="w-12 h-12 rounded-full object-cover ring-2 ring-background"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
@@ -333,6 +387,42 @@ export default function Dashboard() {
                 <span className="font-bold text-foreground">{totalVotes.toLocaleString()}</span>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Voting History */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <History className="w-5 h-5 text-muted-foreground" />
+              <h2 className="text-xl font-bold text-foreground">Your Voting History</h2>
+            </div>
+          </div>
+
+          <div className="glass-card divide-y divide-border">
+            {votingHistory.map((vote, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="p-4 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-success" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">{vote.election}</p>
+                    <p className="text-sm text-muted-foreground">Voted for {vote.candidate}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-foreground">{vote.date}</p>
+                  <span className="text-xs text-success">Verified</span>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
       </div>
