@@ -166,11 +166,15 @@
   .text-gradient {
     @apply bg-clip-text text-transparent;
     background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .text-gradient-gold {
     @apply bg-clip-text text-transparent;
     background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .glow-primary {
