@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Users,
   Vote,
@@ -7,9 +7,7 @@ import {
   Shield,
   Lock,
   Unlock,
-  AlertTriangle,
   Activity,
-  Settings,
   Plus,
   Search,
   MoreVertical,
@@ -19,19 +17,18 @@ import {
   Download,
   RefreshCw,
   Power,
-  FileText,
   TrendingUp,
   UserPlus,
   UserMinus,
   Clock,
   CheckCircle2,
-  XCircle,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatsCard } from "@/components/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,49 +45,90 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-
-// Mock data
-const mockAdmins = [
-  { id: "1", name: "Sarah Johnson", email: "sarah@electvote.com", role: "admin", status: "active", createdAt: "2024-01-15", lastLogin: "2 hours ago" },
-  { id: "2", name: "Michael Chen", email: "michael@electvote.com", role: "admin", status: "active", createdAt: "2024-02-20", lastLogin: "1 day ago" },
-  { id: "3", name: "Emily Rodriguez", email: "emily@electvote.com", role: "admin", status: "suspended", createdAt: "2024-03-10", lastLogin: "1 week ago" },
-];
-
-const mockAuditLogs = [
-  { id: "1", action: "SYSTEM_LOCK", user: "Super Admin", details: "Voting system locked for maintenance", timestamp: "2024-12-20 10:30:00", severity: "warning" },
-  { id: "2", action: "ADMIN_CREATED", user: "Super Admin", details: "New admin account: michael@electvote.com", timestamp: "2024-12-19 14:22:00", severity: "info" },
-  { id: "3", action: "ELECTION_MODIFIED", user: "Sarah Johnson", details: "Municipal Elections end date extended", timestamp: "2024-12-19 09:15:00", severity: "info" },
-  { id: "4", action: "VOTER_SUSPENDED", user: "Michael Chen", details: "Voter account suspended: suspicious activity", timestamp: "2024-12-18 16:45:00", severity: "error" },
-  { id: "5", action: "RESULTS_EXPORTED", user: "Emily Rodriguez", details: "Q3 Board Elections results exported", timestamp: "2024-12-18 11:00:00", severity: "info" },
-  { id: "6", action: "SYSTEM_UNLOCK", user: "Super Admin", details: "Voting system unlocked", timestamp: "2024-12-17 08:00:00", severity: "success" },
-];
-
-const systemMetrics = [
-  { label: "Server Uptime", value: "99.97%", status: "healthy" },
-  { label: "Active Sessions", value: "1,247", status: "healthy" },
-  { label: "API Response", value: "45ms", status: "healthy" },
-  { label: "Database Load", value: "23%", status: "healthy" },
-];
+import { useToast } from "@/hooks/use-toast";
+import { useSystemState } from "@/hooks/useSystemState";
+import { getTimeGreeting } from "@/hooks/useElectionData";
 
 export default function SuperAdminDashboard() {
   const { user } = useAuth();
-  const [isSystemLocked, setIsSystemLocked] = useState(false);
+  const { toast } = useToast();
+  const {
+    isSystemLocked,
+    lockSystem,
+    unlockSystem,
+    admins,
+    addAdmin,
+    suspendAdmin,
+    activateAdmin,
+    deleteAdmin,
+    auditLogs,
+    systemMetrics,
+  } = useSystemState();
+
   const [showLockDialog, setShowLockDialog] = useState(false);
   const [showAddAdminDialog, setShowAddAdminDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [newAdmin, setNewAdmin] = useState({ name: "", email: "" });
 
   const handleSystemLockToggle = () => {
     if (!isSystemLocked) {
       setShowLockDialog(true);
     } else {
-      setIsSystemLocked(false);
+      unlockSystem();
+      toast({ title: "System Unlocked", description: "Voting system is now operational." });
     }
   };
 
   const confirmSystemLock = () => {
-    setIsSystemLocked(true);
+    lockSystem();
     setShowLockDialog(false);
+    toast({ title: "System Locked", description: "Voting system has been locked.", variant: "destructive" });
   };
+
+  const handleAddAdmin = () => {
+    if (!newAdmin.name || !newAdmin.email) {
+      toast({ title: "Missing Fields", description: "Please fill in all required fields.", variant: "destructive" });
+      return;
+    }
+    addAdmin(newAdmin.name, newAdmin.email);
+    toast({ title: "Admin Created", description: `${newAdmin.name} has been added as an admin.` });
+    setShowAddAdminDialog(false);
+    setNewAdmin({ name: "", email: "" });
+  };
+
+  const handleSuspendAdmin = (id: string, name: string) => {
+    suspendAdmin(id);
+    toast({ title: "Admin Suspended", description: `${name} has been suspended.`, variant: "destructive" });
+  };
+
+  const handleActivateAdmin = (id: string, name: string) => {
+    activateAdmin(id);
+    toast({ title: "Admin Activated", description: `${name} is now active.` });
+  };
+
+  const handleDeleteAdmin = (id: string, name: string) => {
+    deleteAdmin(id);
+    toast({ title: "Admin Deleted", description: `${name} has been removed.`, variant: "destructive" });
+  };
+
+  const handleExportLogs = () => {
+    toast({ title: "Exporting Logs", description: "Audit logs will be downloaded shortly." });
+  };
+
+  const handleRefresh = () => {
+    toast({ title: "Data Refreshed", description: "Showing latest system metrics." });
+  };
+
+  const handleEmergencyStop = () => {
+    lockSystem();
+    toast({ title: "Emergency Stop Activated", description: "All systems have been halted.", variant: "destructive" });
+  };
+
+  const filteredLogs = auditLogs.filter(log =>
+    log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    log.details.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <DashboardLayout userRole="super_admin" userName={user?.name || "Super Admin"}>
@@ -118,6 +156,7 @@ export default function SuperAdminDashboard() {
                 )}
               </div>
               <div>
+                <p className="text-muted-foreground text-sm">{getTimeGreeting()}</p>
                 <h1 className="text-2xl font-bold text-foreground">
                   Super Admin Control Center
                 </h1>
@@ -127,7 +166,7 @@ export default function SuperAdminDashboard() {
                     "font-semibold",
                     isSystemLocked ? "text-destructive" : "text-success"
                   )}>
-                    {isSystemLocked ? "LOCKED" : "OPERATIONAL"}
+                    {isSystemLocked ? "LOCKED 🔒" : "OPERATIONAL ✓"}
                   </span>
                 </p>
               </div>
@@ -141,7 +180,7 @@ export default function SuperAdminDashboard() {
                   className={isSystemLocked ? "data-[state=checked]:bg-destructive" : ""}
                 />
               </div>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2" onClick={handleEmergencyStop}>
                 <Power className="w-4 h-4" />
                 Emergency Stop
               </Button>
@@ -153,8 +192,8 @@ export default function SuperAdminDashboard() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Admins"
-            value={mockAdmins.length}
-            subtitle="1 suspended"
+            value={admins.length}
+            subtitle={`${admins.filter(a => a.status === "suspended").length} suspended`}
             icon={Shield}
             variant="primary"
           />
@@ -185,7 +224,7 @@ export default function SuperAdminDashboard() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">System Metrics</h2>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleRefresh}>
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
             </Button>
@@ -224,7 +263,7 @@ export default function SuperAdminDashboard() {
             </div>
 
             <div className="glass-card divide-y divide-border">
-              {mockAdmins.map((admin, i) => (
+              {admins.map((admin, i) => (
                 <motion.div
                   key={admin.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -258,13 +297,13 @@ export default function SuperAdminDashboard() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toast({ title: admin.name, description: `Email: ${admin.email}\nLast login: ${admin.lastLogin}` })}>
                           <Eye className="w-4 h-4 mr-2" /> View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toast({ title: "Edit", description: "Opening admin editor..." })}>
                           <Edit className="w-4 h-4 mr-2" /> Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => admin.status === "active" ? handleSuspendAdmin(admin.id, admin.name) : handleActivateAdmin(admin.id, admin.name)}>
                           {admin.status === "active" ? (
                             <>
                               <UserMinus className="w-4 h-4 mr-2" /> Suspend
@@ -275,7 +314,7 @@ export default function SuperAdminDashboard() {
                             </>
                           )}
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteAdmin(admin.id, admin.name)}>
                           <Trash2 className="w-4 h-4 mr-2" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -290,7 +329,7 @@ export default function SuperAdminDashboard() {
           <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-foreground">System Analytics</h2>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={handleExportLogs}>
                 <Download className="w-4 h-4 mr-2" />
                 Export
               </Button>
@@ -382,7 +421,7 @@ export default function SuperAdminDashboard() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleExportLogs}>
                 <Download className="w-4 h-4 mr-2" />
                 Export Logs
               </Button>
@@ -401,7 +440,7 @@ export default function SuperAdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {mockAuditLogs.map((log, i) => (
+                {filteredLogs.map((log, i) => (
                   <motion.tr
                     key={log.id}
                     initial={{ opacity: 0 }}
@@ -422,16 +461,12 @@ export default function SuperAdminDashboard() {
                     <td className="p-4 text-sm text-muted-foreground max-w-xs truncate">{log.details}</td>
                     <td className="p-4">
                       <span className={cn(
-                        "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium",
+                        "px-2 py-1 rounded-full text-xs font-medium",
                         log.severity === "info" && "bg-election-blue/10 text-election-blue",
                         log.severity === "warning" && "bg-amber-500/10 text-amber-600",
                         log.severity === "error" && "bg-destructive/10 text-destructive",
                         log.severity === "success" && "bg-success/10 text-success"
                       )}>
-                        {log.severity === "info" && <Activity className="w-3 h-3" />}
-                        {log.severity === "warning" && <AlertTriangle className="w-3 h-3" />}
-                        {log.severity === "error" && <XCircle className="w-3 h-3" />}
-                        {log.severity === "success" && <CheckCircle2 className="w-3 h-3" />}
                         {log.severity}
                       </span>
                     </td>
@@ -448,18 +483,17 @@ export default function SuperAdminDashboard() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="w-5 h-5" />
+              <Lock className="w-5 h-5" />
               Lock Voting System
             </DialogTitle>
             <DialogDescription>
-              This will immediately stop all voting activity across all elections.
-              Voters will not be able to cast votes until the system is unlocked.
+              This will lock the entire voting system. No one will be able to cast votes until you unlock it.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20">
               <p className="text-sm text-destructive font-medium">
-                Warning: This action will affect all active elections and all voters.
+                Warning: This action will immediately stop all voting activity across all elections.
               </p>
             </div>
           </div>
@@ -477,34 +511,37 @@ export default function SuperAdminDashboard() {
 
       {/* Add Admin Dialog */}
       <Dialog open={showAddAdminDialog} onOpenChange={setShowAddAdminDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Add New Admin</DialogTitle>
             <DialogDescription>
-              Create a new administrator account with full election management permissions.
+              Create a new administrator account.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Full Name</label>
-              <Input placeholder="Enter admin name" />
+              <Label>Full Name *</Label>
+              <Input 
+                placeholder="Enter admin name"
+                value={newAdmin.name}
+                onChange={(e) => setNewAdmin(prev => ({ ...prev, name: e.target.value }))}
+              />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Email Address</label>
-              <Input placeholder="admin@example.com" type="email" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Temporary Password</label>
-              <Input placeholder="Enter temporary password" type="password" />
+              <Label>Email Address *</Label>
+              <Input 
+                type="email"
+                placeholder="admin@electvote.com"
+                value={newAdmin.email}
+                onChange={(e) => setNewAdmin(prev => ({ ...prev, email: e.target.value }))}
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddAdminDialog(false)}>
-              Cancel
-            </Button>
-            <Button variant="hero" onClick={() => setShowAddAdminDialog(false)}>
+            <Button variant="outline" onClick={() => setShowAddAdminDialog(false)}>Cancel</Button>
+            <Button variant="hero" onClick={handleAddAdmin}>
               <UserPlus className="w-4 h-4 mr-2" />
-              Create Admin
+              Add Admin
             </Button>
           </DialogFooter>
         </DialogContent>
