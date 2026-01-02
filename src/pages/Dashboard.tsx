@@ -123,9 +123,9 @@ export default function Dashboard() {
         >
           <div className="absolute inset-0 election-pattern opacity-50" />
           <div className="relative">
-            <p className="text-white/60 text-sm mb-1">{getTimeGreeting()}</p>
+            <p className="text-white/60 text-sm mb-1">{getTimeGreeting()}, User</p>
             <h1 className="text-2xl font-bold text-white mb-2">
-              Welcome back, {user?.name?.split(" ")[0] || "Voter"}! 👋
+              स्वागत है! ElectVote में आपका स्वागत है 🗳️
             </h1>
             <p className="text-white/80 mb-4">
               {hasVoted || userVote
