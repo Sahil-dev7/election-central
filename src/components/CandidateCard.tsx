@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { Check, Vote } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PartySymbol } from "./PartySymbols";
 
 interface CandidateCardProps {
   id: string;
   name: string;
   party: string;
-  partySymbol?: string;
   photo: string;
   manifesto?: string;
   isSelected?: boolean;
@@ -20,7 +20,6 @@ export function CandidateCard({
   id,
   name,
   party,
-  partySymbol,
   photo,
   manifesto,
   isSelected,
@@ -54,30 +53,31 @@ export function CandidateCard({
         </motion.div>
       )}
 
-      {/* Photo section */}
-      <div className="relative h-48 overflow-hidden rounded-t-2xl bg-gradient-to-b from-election-navy to-election-blue">
+      {/* Photo section - taller to show full face */}
+      <div className="relative h-56 overflow-hidden rounded-t-2xl bg-gradient-to-b from-slate-100 to-slate-200">
         <img
           src={photo}
           alt={name}
-          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         
-        {/* Party symbol */}
-        {partySymbol && (
-          <div className="absolute bottom-3 left-3 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center overflow-hidden">
-            <img src={partySymbol} alt={party} className="w-10 h-10 object-contain" />
-          </div>
-        )}
+        {/* Party symbol badge */}
+        <div className="absolute bottom-3 left-3 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center overflow-hidden border-2 border-white">
+          <PartySymbol party={party} className="w-9 h-9" />
+        </div>
       </div>
 
       {/* Content section */}
       <div className="p-5">
-        <h3 className="text-xl font-bold text-foreground mb-1">{name}</h3>
-        <p className="text-sm font-medium text-election-blue mb-3">{party}</p>
+        <h3 className="text-lg font-bold text-foreground mb-1 leading-tight">{name}</h3>
+        <div className="flex items-center gap-2 mb-3">
+          <PartySymbol party={party} className="w-4 h-4" />
+          <p className="text-xs font-medium text-election-blue">{party}</p>
+        </div>
         
         {manifesto && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+          <p className="text-xs text-muted-foreground line-clamp-2 mb-4">
             {manifesto}
           </p>
         )}
@@ -86,7 +86,7 @@ export function CandidateCard({
         {voteCount !== undefined && totalVotes !== undefined && (
           <div className="mb-4">
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-muted-foreground">Votes</span>
+              <span className="text-muted-foreground">वोट / Votes</span>
               <span className="font-semibold text-foreground">{voteCount.toLocaleString()}</span>
             </div>
             <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -118,7 +118,7 @@ export function CandidateCard({
             }}
           >
             <Vote className="w-5 h-5" />
-            {isSelected ? "Selected" : "Select Candidate"}
+            {isSelected ? "चयनित ✓" : "उम्मीदवार चुनें"}
           </motion.button>
         )}
       </div>

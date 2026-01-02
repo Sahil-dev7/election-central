@@ -112,8 +112,11 @@ export default function Dashboard() {
     });
   };
 
+  // Show user's name if logged in, otherwise "User"
+  const displayName = user?.name || "User";
+
   return (
-    <DashboardLayout userRole="voter" userName={user?.name || "Voter"}>
+    <DashboardLayout userRole="voter" userName={displayName}>
       <div className="space-y-8">
         {/* Welcome section with greeting */}
         <motion.div
@@ -123,14 +126,14 @@ export default function Dashboard() {
         >
           <div className="absolute inset-0 election-pattern opacity-50" />
           <div className="relative">
-            <p className="text-white/60 text-sm mb-1">{getTimeGreeting()}, User</p>
+            <p className="text-white/60 text-sm mb-1">{getTimeGreeting()}, {displayName}</p>
             <h1 className="text-2xl font-bold text-white mb-2">
               स्वागत है! ElectVote में आपका स्वागत है 🗳️
             </h1>
             <p className="text-white/80 mb-4">
               {hasVoted || userVote
-                ? "Thank you for voting! View the live results below."
-                : `You have ${elections.filter(e => e.status === "active").length} active election available. Your vote matters - make it count!`}
+                ? "मतदान के लिए धन्यवाद! नीचे लाइव परिणाम देखें। Thank you for voting!"
+                : `आपके पास ${elections.filter(e => e.status === "active").length} सक्रिय चुनाव उपलब्ध है। आपका वोट मायने रखता है!`}
             </p>
             <div className="flex items-center gap-4">
               {!hasVoted && !userVote && (
@@ -140,12 +143,12 @@ export default function Dashboard() {
                   onClick={() => document.getElementById("voting-section")?.scrollIntoView({ behavior: "smooth" })}
                 >
                   <Vote className="w-5 h-5" />
-                  Cast Your Vote
+                  अपना वोट डालें
                 </Button>
               )}
               <Button variant="glass" onClick={handleElectionInfo}>
                 <Info className="w-4 h-4 mr-2" />
-                Election Info
+                चुनाव जानकारी
               </Button>
             </div>
           </div>

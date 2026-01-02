@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Vote,
   LayoutDashboard,
@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -45,8 +47,18 @@ const voterNavItems = [
 export function DashboardLayout({ children, userRole = "voter", userName = "User" }: DashboardLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  // Show user's name if logged in, otherwise show "User"
+  const displayName = user?.name || userName || "User";
 
   const navItems = userRole === "admin" || userRole === "super_admin" ? adminNavItems : voterNavItems;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -129,12 +141,12 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-sidebar-accent flex items-center justify-center flex-shrink-0">
                 <span className="text-sm font-semibold text-sidebar-foreground">
-                  {userName.charAt(0).toUpperCase()}
+                  {displayName.charAt(0).toUpperCase()}
                 </span>
               </div>
               {!isCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-sidebar-foreground truncate">{userName}</p>
+                  <p className="text-sm font-medium text-sidebar-foreground truncate">{displayName}</p>
                   <p className="text-xs text-sidebar-foreground/60 truncate">View profile</p>
                 </div>
               )}
@@ -142,6 +154,7 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
                 <Button
                   variant="ghost"
                   size="icon"
+                  onClick={handleLogout}
                   className="text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
                 >
                   <LogOut className="w-4 h-4" />
@@ -169,12 +182,20 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
       >
         {/* Top bar */}
         <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 sticky top-0 z-30">
-          <div>
-            <h1 className="text-lg font-semibold text-foreground">
-              {navItems.find((item) => item.path === location.pathname)?.label || "Dashboard"}
-            </h1>
+          <div className="flex items-center gap-4">
+            {/* Government emblem style */}
+            <div className="w-8 h-8 rounded-full bg-election-gold/20 flex items-center justify-center">
+              <Shield className="w-4 h-4 text-election-gold" />
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-foreground">
+                {navItems.find((item) => item.path === location.pathname)?.label || "Dashboard"}
+              </h1>
+              <p className="text-xs text-muted-foreground">भारत निर्वाचन आयोग | Election Commission of India</p>
+            </div>
           </div>
           <div className="flex items-center gap-4">
+            <LanguageToggle />
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-election-gold" />
