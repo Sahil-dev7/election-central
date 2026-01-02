@@ -43,41 +43,41 @@ export interface VoteHistory {
   status: "completed";
 }
 
-// Initial mock data with realistic politician photos
+// Initial mock data with Indian politician photos
 const initialCandidates: Candidate[] = [
   {
     id: "1",
-    name: "James Mitchell",
-    party: "Progressive Alliance",
+    name: "Rajesh Kumar Sharma",
+    party: "Bharatiya Janata Party (BJP)",
     photo: politician1,
-    manifesto: "Building a sustainable future with clean energy initiatives, job creation programs, and comprehensive healthcare reform for all citizens.",
+    manifesto: "विकास और समृद्धि के लिए प्रतिबद्ध। बुनियादी ढांचे का विकास, रोजगार सृजन, और सभी नागरिकों के लिए स्वास्थ्य सेवा सुनिश्चित करना।",
     voteCount: 12450,
     status: "approved",
   },
   {
     id: "2",
-    name: "Sarah Chen",
-    party: "Unity Coalition",
+    name: "Amit Singh Yadav",
+    party: "Bharatiya Janata Party (BJP)",
     photo: politician2,
-    manifesto: "Strengthening our economy through small business support, infrastructure investment, and quality education for every child.",
+    manifesto: "आत्मनिर्भर भारत की ओर। छोटे व्यापारियों का समर्थन, डिजिटल इंडिया, और युवाओं के लिए कौशल विकास कार्यक्रम।",
     voteCount: 9830,
     status: "approved",
   },
   {
     id: "3",
-    name: "Marcus Rivera",
-    party: "Future Forward",
+    name: "Arvind Kumar Gupta",
+    party: "Aam Aadmi Party (AAP)",
     photo: politician3,
-    manifesto: "Embracing innovation and technology to modernize public services, create new industries, and prepare our workforce for tomorrow.",
+    manifesto: "जनता की सेवा में। मुफ्त बिजली-पानी, उत्कृष्ट शिक्षा, और भ्रष्टाचार मुक्त प्रशासन के लिए समर्पित।",
     voteCount: 4120,
     status: "approved",
   },
   {
     id: "4",
-    name: "Elizabeth Grant",
-    party: "Citizens First",
+    name: "Priya Gandhi Devi",
+    party: "Indian National Congress",
     photo: politician4,
-    manifesto: "Prioritizing healthcare access, affordable housing, and community safety for all residents in every neighborhood.",
+    manifesto: "गरीबों और किसानों के अधिकारों की रक्षा। महिला सशक्तिकरण, ग्रामीण विकास, और सामाजिक न्याय।",
     voteCount: 2050,
     status: "pending",
   },
@@ -86,10 +86,10 @@ const initialCandidates: Candidate[] = [
 const initialElections: Election[] = [
   {
     id: "1",
-    title: "2024 Municipal Elections",
-    description: "Vote for your city council representatives and mayor",
-    startDate: "Dec 15, 2024",
-    endDate: "Dec 22, 2024",
+    title: "2025 नगर निगम चुनाव",
+    description: "अपने पार्षद और महापौर के लिए मतदान करें",
+    startDate: "Jan 15, 2025",
+    endDate: "Jan 22, 2025",
     candidateCount: 4,
     voterCount: 45000,
     votesCast: 28450,
@@ -97,10 +97,10 @@ const initialElections: Election[] = [
   },
   {
     id: "2",
-    title: "Student Union Elections",
-    description: "Annual election for student body president and senate",
-    startDate: "Jan 5, 2025",
-    endDate: "Jan 12, 2025",
+    title: "छात्र संघ चुनाव 2025",
+    description: "छात्र संघ अध्यक्ष और सीनेट के लिए वार्षिक चुनाव",
+    startDate: "Feb 5, 2025",
+    endDate: "Feb 12, 2025",
     candidateCount: 6,
     voterCount: 12000,
     votesCast: 0,
@@ -108,8 +108,8 @@ const initialElections: Election[] = [
   },
   {
     id: "3",
-    title: "Q3 Board Elections",
-    description: "Quarterly board member election",
+    title: "पंचायत चुनाव 2024",
+    description: "ग्राम पंचायत सदस्यों का चुनाव",
     startDate: "Oct 1, 2024",
     endDate: "Oct 8, 2024",
     candidateCount: 4,
@@ -120,17 +120,17 @@ const initialElections: Election[] = [
 ];
 
 const initialVoters: Voter[] = [
-  { id: "1", name: "John Doe", email: "john@example.com", status: "active", votedIn: 3, lastActive: "2 min ago" },
-  { id: "2", name: "Jane Smith", email: "jane@example.com", status: "active", votedIn: 2, lastActive: "1 hour ago" },
-  { id: "3", name: "Mike Johnson", email: "mike@example.com", status: "pending", votedIn: 0, lastActive: "Never" },
-  { id: "4", name: "Emily Brown", email: "emily@example.com", status: "suspended", votedIn: 1, lastActive: "3 days ago" },
-  { id: "5", name: "David Wilson", email: "david@example.com", status: "active", votedIn: 5, lastActive: "5 min ago" },
+  { id: "1", name: "Rahul Verma", email: "rahul@example.com", status: "active", votedIn: 3, lastActive: "2 min ago" },
+  { id: "2", name: "Priya Sharma", email: "priya@example.com", status: "active", votedIn: 2, lastActive: "1 hour ago" },
+  { id: "3", name: "Vikram Singh", email: "vikram@example.com", status: "pending", votedIn: 0, lastActive: "Never" },
+  { id: "4", name: "Anita Kumari", email: "anita@example.com", status: "suspended", votedIn: 1, lastActive: "3 days ago" },
+  { id: "5", name: "Suresh Yadav", email: "suresh@example.com", status: "active", votedIn: 5, lastActive: "5 min ago" },
 ];
 
 const initialVoteHistory: VoteHistory[] = [
-  { election: "Q3 Board Elections", date: "Oct 8, 2024", candidate: "John Smith", status: "completed" },
-  { election: "Annual General Meeting", date: "Sep 15, 2024", candidate: "Jane Doe", status: "completed" },
-  { election: "Community Vote 2024", date: "Aug 20, 2024", candidate: "Mike Johnson", status: "completed" },
+  { election: "पंचायत चुनाव 2024", date: "Oct 8, 2024", candidate: "Rajesh Kumar Sharma", status: "completed" },
+  { election: "वार्षिक आम सभा", date: "Sep 15, 2024", candidate: "Amit Singh Yadav", status: "completed" },
+  { election: "समुदाय मतदान 2024", date: "Aug 20, 2024", candidate: "Arvind Kumar Gupta", status: "completed" },
 ];
 
 // Custom hook for election data with real-time simulation
