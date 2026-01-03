@@ -27,21 +27,21 @@ interface DashboardLayoutProps {
 }
 
 const adminNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: Calendar, label: "Elections", path: "/dashboard/elections" },
-  { icon: Users, label: "Candidates", path: "/dashboard/candidates" },
-  { icon: Users, label: "Voters", path: "/dashboard/voters" },
-  { icon: BarChart3, label: "Results", path: "/dashboard/results" },
-  { icon: FileText, label: "Audit Logs", path: "/dashboard/logs" },
-  { icon: Settings, label: "Settings", path: "/dashboard/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
+  { icon: Calendar, label: "Elections", path: "/admin" },
+  { icon: Users, label: "Candidates", path: "/admin" },
+  { icon: Users, label: "Voters", path: "/admin" },
+  { icon: BarChart3, label: "Results", path: "/results" },
+  { icon: FileText, label: "Audit Logs", path: "/audit-logs" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 const voterNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: Vote, label: "Vote Now", path: "/dashboard/vote" },
-  { icon: BarChart3, label: "Results", path: "/dashboard/results" },
-  { icon: Calendar, label: "Election History", path: "/dashboard/history" },
-  { icon: Settings, label: "Settings", path: "/dashboard/settings" },
+  { icon: Vote, label: "Vote Now", path: "/dashboard" },
+  { icon: BarChart3, label: "Results", path: "/results" },
+  { icon: Calendar, label: "History", path: "/dashboard" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 export function DashboardLayout({ children, userRole = "voter", userName = "User" }: DashboardLayoutProps) {
