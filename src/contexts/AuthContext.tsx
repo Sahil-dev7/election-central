@@ -26,19 +26,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const mockUsers: Record<string, User> = {
   "super@electvote.com": {
     id: "1",
-    name: "Super Administrator",
+    name: "मुख्य प्रशासक",
     email: "super@electvote.com",
     role: "super_admin",
   },
   "admin@electvote.com": {
     id: "2",
-    name: "Election Admin",
+    name: "चुनाव प्रशासक",
     email: "admin@electvote.com",
     role: "admin",
   },
   "voter@electvote.com": {
     id: "3",
-    name: "John Voter",
+    name: "राहुल वर्मा",
     email: "voter@electvote.com",
     role: "voter",
   },

@@ -12,7 +12,9 @@ import {
   ArrowRight,
   History,
   Info,
-  RefreshCw
+  RefreshCw,
+  Download,
+  FileText
 } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatsCard } from "@/components/StatsCard";
@@ -24,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useElectionData, getTimeGreeting } from "@/hooks/useElectionData";
+import { generateVoteReceipt } from "@/utils/generateVoteReceipt";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -86,6 +89,25 @@ export default function Dashboard() {
     toast({
       title: "Vote recorded successfully! ✓",
       description: `Thank you for voting for ${selectedCandidateData?.name}. Your voice matters!`,
+    });
+  };
+
+  const handleDownloadReceipt = () => {
+    if (!selectedCandidateData || !activeElection) return;
+    
+    generateVoteReceipt({
+      voterName: displayName,
+      voterId: `VID${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
+      electionTitle: activeElection.title,
+      candidateName: selectedCandidateData.name,
+      candidateParty: selectedCandidateData.party,
+      timestamp: new Date(),
+      transactionId: `VT-2025-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+    });
+    
+    toast({
+      title: "रसीद डाउनलोड हो गई",
+      description: "आपकी मतदान रसीद PDF के रूप में डाउनलोड हो गई है।",
     });
   };
 
@@ -294,14 +316,20 @@ export default function Dashboard() {
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-success/10 flex items-center justify-center">
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Thank You for Voting!</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">मतदान के लिए धन्यवाद!</h3>
               <p className="text-muted-foreground mb-4">
-                You voted for <span className="font-semibold text-foreground">{selectedCandidateData?.name || userVote?.candidateId}</span>
+                आपने <span className="font-semibold text-foreground">{selectedCandidateData?.name || userVote?.candidateId}</span> को वोट दिया
               </p>
-              <Button variant="outline" onClick={handleViewResults}>
-                View Live Results
-                <BarChart3 className="w-4 h-4 ml-2" />
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="default" onClick={handleDownloadReceipt}>
+                  <Download className="w-4 h-4 mr-2" />
+                  रसीद डाउनलोड करें
+                </Button>
+                <Button variant="outline" onClick={handleViewResults}>
+                  लाइव परिणाम देखें
+                  <BarChart3 className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </motion.div>
           )}
         </section>

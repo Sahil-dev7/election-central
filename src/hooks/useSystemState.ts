@@ -26,18 +26,18 @@ export interface SystemMetric {
 }
 
 const initialAdmins: Admin[] = [
-  { id: "1", name: "Sarah Johnson", email: "sarah@electvote.com", role: "admin", status: "active", createdAt: "2024-01-15", lastLogin: "2 hours ago" },
-  { id: "2", name: "Michael Chen", email: "michael@electvote.com", role: "admin", status: "active", createdAt: "2024-02-20", lastLogin: "1 day ago" },
-  { id: "3", name: "Emily Rodriguez", email: "emily@electvote.com", role: "admin", status: "suspended", createdAt: "2024-03-10", lastLogin: "1 week ago" },
+  { id: "1", name: "अंजलि शर्मा", email: "anjali@electvote.com", role: "admin", status: "active", createdAt: "2024-01-15", lastLogin: "2 घंटे पहले" },
+  { id: "2", name: "राजीव कुमार", email: "rajeev@electvote.com", role: "admin", status: "active", createdAt: "2024-02-20", lastLogin: "1 दिन पहले" },
+  { id: "3", name: "सुनीता देवी", email: "sunita@electvote.com", role: "admin", status: "suspended", createdAt: "2024-03-10", lastLogin: "1 सप्ताह पहले" },
 ];
 
 const initialAuditLogs: AuditLog[] = [
-  { id: "1", action: "SYSTEM_LOCK", user: "Super Admin", details: "Voting system locked for maintenance", timestamp: "2024-12-20 10:30:00", severity: "warning" },
-  { id: "2", action: "ADMIN_CREATED", user: "Super Admin", details: "New admin account: michael@electvote.com", timestamp: "2024-12-19 14:22:00", severity: "info" },
-  { id: "3", action: "ELECTION_MODIFIED", user: "Sarah Johnson", details: "Municipal Elections end date extended", timestamp: "2024-12-19 09:15:00", severity: "info" },
-  { id: "4", action: "VOTER_SUSPENDED", user: "Michael Chen", details: "Voter account suspended: suspicious activity", timestamp: "2024-12-18 16:45:00", severity: "error" },
-  { id: "5", action: "RESULTS_EXPORTED", user: "Emily Rodriguez", details: "Q3 Board Elections results exported", timestamp: "2024-12-18 11:00:00", severity: "info" },
-  { id: "6", action: "SYSTEM_UNLOCK", user: "Super Admin", details: "Voting system unlocked", timestamp: "2024-12-17 08:00:00", severity: "success" },
+  { id: "1", action: "SYSTEM_LOCK", user: "मुख्य प्रशासक", details: "रखरखाव के लिए मतदान प्रणाली बंद", timestamp: "2024-12-20 10:30:00", severity: "warning" },
+  { id: "2", action: "ADMIN_CREATED", user: "मुख्य प्रशासक", details: "नया प्रशासक खाता: rajeev@electvote.com", timestamp: "2024-12-19 14:22:00", severity: "info" },
+  { id: "3", action: "ELECTION_MODIFIED", user: "अंजलि शर्मा", details: "नगर निगम चुनाव की अंतिम तिथि बढ़ाई गई", timestamp: "2024-12-19 09:15:00", severity: "info" },
+  { id: "4", action: "VOTER_SUSPENDED", user: "राजीव कुमार", details: "संदिग्ध गतिविधि: मतदाता खाता निलंबित", timestamp: "2024-12-18 16:45:00", severity: "error" },
+  { id: "5", action: "RESULTS_EXPORTED", user: "सुनीता देवी", details: "पंचायत चुनाव परिणाम निर्यात किए गए", timestamp: "2024-12-18 11:00:00", severity: "info" },
+  { id: "6", action: "SYSTEM_UNLOCK", user: "मुख्य प्रशासक", details: "मतदान प्रणाली अनलॉक", timestamp: "2024-12-17 08:00:00", severity: "success" },
 ];
 
 export function useSystemState() {

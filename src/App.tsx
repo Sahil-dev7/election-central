@@ -11,6 +11,9 @@ import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import SettingsPage from "./pages/SettingsPage";
+import AuditLogsPage from "./pages/AuditLogsPage";
+import ResultsPage from "./pages/ResultsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +66,36 @@ function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={["super_admin"]}>
             <SuperAdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Settings Page */}
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute allowedRoles={["voter", "admin", "super_admin"]}>
+            <SettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Audit Logs Page */}
+      <Route
+        path="/audit-logs"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            <AuditLogsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Results Page */}
+      <Route
+        path="/results"
+        element={
+          <ProtectedRoute allowedRoles={["voter", "admin", "super_admin"]}>
+            <ResultsPage />
           </ProtectedRoute>
         }
       />

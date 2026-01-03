@@ -13,36 +13,37 @@ import {
   Award
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-voting.jpg";
+import { HeroCarousel } from "@/components/HeroCarousel";
+import { NewsSection } from "@/components/NewsSection";
 
 const features = [
   {
     icon: Shield,
-    title: "Bank-Level Security",
-    description: "End-to-end encryption and blockchain-verified vote records ensure complete integrity.",
+    title: "बैंक-स्तरीय सुरक्षा",
+    description: "एंड-टू-एंड एन्क्रिप्शन और ब्लॉकचेन-सत्यापित वोट रिकॉर्ड पूर्ण अखंडता सुनिश्चित करते हैं।",
   },
   {
     icon: Fingerprint,
-    title: "Verified Identity",
-    description: "Multi-factor authentication ensures only eligible voters can participate.",
+    title: "सत्यापित पहचान",
+    description: "मल्टी-फैक्टर प्रमाणीकरण सुनिश्चित करता है कि केवल पात्र मतदाता ही भाग ले सकें।",
   },
   {
     icon: BarChart3,
-    title: "Real-Time Results",
-    description: "Watch live vote counts and analytics as the election unfolds.",
+    title: "लाइव परिणाम",
+    description: "चुनाव के दौरान वास्तविक समय में मतगणना और विश्लेषण देखें।",
   },
   {
     icon: Globe,
-    title: "Vote Anywhere",
-    description: "Cast your ballot securely from any device, anywhere in the world.",
+    title: "कहीं से भी वोट करें",
+    description: "किसी भी डिवाइस से, दुनिया में कहीं से भी सुरक्षित रूप से अपना मत डालें।",
   },
 ];
 
 const stats = [
-  { value: "2M+", label: "Votes Cast" },
-  { value: "500+", label: "Elections" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "150+", label: "Organizations" },
+  { value: "20 लाख+", label: "वोट डाले गए" },
+  { value: "500+", label: "चुनाव" },
+  { value: "99.9%", label: "अपटाइम" },
+  { value: "150+", label: "संगठन" },
 ];
 
 export default function Index() {
@@ -64,175 +65,92 @@ export default function Index() {
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
-              <Link to="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Features
-              </Link>
-              <Link to="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                How It Works
-              </Link>
-              <Link to="#security" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Security
-              </Link>
+              <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                विशेषताएं
+              </a>
+              <a href="#news" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                समाचार
+              </a>
+              <a href="#security" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                सुरक्षा
+              </a>
             </div>
 
             <div className="flex items-center gap-3">
               <Link to="/auth">
-                <Button variant="ghost" size="sm">Sign In</Button>
+                <Button variant="ghost" size="sm">साइन इन</Button>
               </Link>
               <Link to="/auth?mode=register">
-                <Button variant="hero" size="sm">Get Started</Button>
+                <Button variant="hero" size="sm">शुरू करें</Button>
               </Link>
             </div>
           </div>
         </div>
       </motion.nav>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 gradient-hero" />
-        <div 
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `url(${heroImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-election-navy/50 to-election-navy" />
+      {/* Hero Carousel - First Fold */}
+      <section className="pt-16">
+        <HeroCarousel />
+        
+        {/* Hero Content Overlay */}
+        <div className="relative -mt-32 z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="text-center"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
+              <Award className="w-4 h-4 text-election-gold" />
+              <span className="text-sm font-medium text-white">150+ संगठनों द्वारा विश्वसनीय</span>
+            </div>
 
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: "50px 50px",
-          }} />
-        </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
+              लोकतांत्रिक मतदान का
+              <span className="block text-gradient-gold">भविष्य</span>
+            </h1>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6"
-              >
-                <Award className="w-4 h-4 text-election-gold" />
-                <span className="text-sm font-medium text-white">Trusted by 150+ Organizations</span>
-              </motion.div>
+            <p className="text-base md:text-lg text-white/80 mb-6 max-w-2xl mx-auto">
+              किसी भी पैमाने के चुनावों के लिए सुरक्षित, पारदर्शी और सुलभ ऑनलाइन मतदान।
+            </p>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-                The Future of
-                <span className="block text-gradient-gold">Democratic Voting</span>
-              </h1>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/auth?mode=register">
+                <Button variant="vote" size="lg" className="w-full sm:w-auto">
+                  अभी वोट करें
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Link to="/auth">
+                <Button variant="glass" size="lg" className="w-full sm:w-auto">
+                  साइन इन करें
+                </Button>
+              </Link>
+            </div>
 
-              <p className="text-lg text-white/80 mb-8 max-w-xl">
-                Secure, transparent, and accessible online voting for elections of any scale. 
-                From local associations to national referendums.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/auth?mode=register">
-                  <Button variant="vote" size="xl" className="w-full sm:w-auto">
-                    Start Voting Now
-                    <ArrowRight className="w-5 h-5" />
-                  </Button>
-                </Link>
-                <Link to="/demo">
-                  <Button variant="glass" size="xl" className="w-full sm:w-auto">
-                    Watch Demo
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Trust badges */}
-              <div className="flex items-center gap-6 mt-10 pt-10 border-t border-white/10">
-                {[Lock, Shield, CheckCircle2].map((Icon, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + i * 0.1 }}
-                    className="flex items-center gap-2"
-                  >
-                    <Icon className="w-5 h-5 text-election-gold" />
-                    <span className="text-sm text-white/70">
-                      {["256-bit Encryption", "GDPR Compliant", "Verified Votes"][i]}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Hero visual */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative hidden lg:block"
-            >
-              <div className="relative">
-                {/* Floating cards */}
+            {/* Trust badges */}
+            <div className="flex items-center justify-center gap-6 mt-8">
+              {[Lock, Shield, CheckCircle2].map((Icon, i) => (
                 <motion.div
-                  animate={{ y: [-10, 10, -10] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -top-10 -right-10 w-64 glass-card p-4 backdrop-blur-xl bg-white/10 border-white/20"
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + i * 0.1 }}
+                  className="flex items-center gap-2"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-election-gold flex items-center justify-center">
-                      <Users className="w-5 h-5 text-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-white">Total Voters</p>
-                      <p className="text-2xl font-bold text-white">24,589</p>
-                    </div>
-                  </div>
-                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: "78%" }}
-                      transition={{ duration: 1.5, delay: 1 }}
-                      className="h-full bg-election-gold rounded-full"
-                    />
-                  </div>
-                  <p className="text-xs text-white/60 mt-1">78% turnout</p>
+                  <Icon className="w-4 h-4 text-election-gold" />
+                  <span className="text-xs text-white/70">
+                    {["256-बिट एन्क्रिप्शन", "GDPR अनुपालन", "सत्यापित वोट"][i]}
+                  </span>
                 </motion.div>
-
-                <motion.div
-                  animate={{ y: [10, -10, 10] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -bottom-5 -left-10 w-56 glass-card p-4 backdrop-blur-xl bg-white/10 border-white/20"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                    <span className="text-sm font-medium text-white">Vote Confirmed</span>
-                  </div>
-                  <p className="text-xs text-white/60">Your vote was securely recorded</p>
-                  <p className="text-xs text-election-gold mt-1">Transaction: #VT-2024-18392</p>
-                </motion.div>
-
-                {/* Main visual */}
-                <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                  <img
-                    src={heroImage}
-                    alt="Secure Online Voting"
-                    className="w-full h-auto"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Stats section */}
-      <section className="relative py-20 bg-background">
+      <section className="relative py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, i) => (
@@ -244,7 +162,7 @@ export default function Index() {
                 transition={{ delay: i * 0.1 }}
                 className="text-center"
               >
-                <p className="text-4xl md:text-5xl font-bold text-gradient mb-2">{stat.value}</p>
+                <p className="text-3xl md:text-4xl font-bold text-gradient mb-2">{stat.value}</p>
                 <p className="text-muted-foreground">{stat.label}</p>
               </motion.div>
             ))}
@@ -252,8 +170,13 @@ export default function Index() {
         </div>
       </section>
 
+      {/* News Section */}
+      <section id="news">
+        <NewsSection />
+      </section>
+
       {/* Features section */}
-      <section id="features" className="py-20 bg-secondary/30">
+      <section id="features" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -262,10 +185,10 @@ export default function Index() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Why Choose ElectVote?
+              ElectVote क्यों चुनें?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Enterprise-grade security meets user-friendly design for elections you can trust.
+              एंटरप्राइज-ग्रेड सुरक्षा उन चुनावों के लिए उपयोगकर्ता-अनुकूल डिज़ाइन से मिलती है जिन पर आप भरोसा कर सकते हैं।
             </p>
           </motion.div>
 
@@ -292,7 +215,7 @@ export default function Index() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 gradient-hero relative overflow-hidden">
+      <section id="security" className="py-20 gradient-hero relative overflow-hidden">
         <div className="absolute inset-0 election-pattern" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
@@ -301,21 +224,21 @@ export default function Index() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Ready to Transform Your Elections?
+              अपने चुनावों को बदलने के लिए तैयार हैं?
             </h2>
             <p className="text-lg text-white/80 mb-8">
-              Join thousands of organizations already using ElectVote for secure, transparent voting.
+              हजारों संगठन पहले से ही सुरक्षित, पारदर्शी मतदान के लिए ElectVote का उपयोग कर रहे हैं।
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/auth?mode=register">
                 <Button variant="vote" size="xl">
-                  Get Started Free
+                  मुफ्त शुरू करें
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               <Link to="/contact">
                 <Button variant="glass" size="xl">
-                  Contact Sales
+                  संपर्क करें
                 </Button>
               </Link>
             </div>
@@ -334,7 +257,7 @@ export default function Index() {
               <span className="text-lg font-bold text-white">ElectVote</span>
             </div>
             <p className="text-sm text-white/60">
-              © 2024 ElectVote. All rights reserved. Secure voting for everyone.
+              © 2025 ElectVote. सर्वाधिकार सुरक्षित। सभी के लिए सुरक्षित मतदान।
             </p>
           </div>
         </div>
