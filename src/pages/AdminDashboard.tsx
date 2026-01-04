@@ -80,8 +80,8 @@ export default function AdminDashboard() {
   const [showCreateElection, setShowCreateElection] = useState(false);
   const [showAddCandidate, setShowAddCandidate] = useState(false);
   const [showEmergencyStop, setShowEmergencyStop] = useState(false);
-  const [newElection, setNewElection] = useState({ title: "", description: "", startDate: "", endDate: "" });
-  const [newCandidate, setNewCandidate] = useState({ name: "", party: "", manifesto: "" });
+  const [newElection, setNewElection] = useState({ title: "", titleHi: "", description: "", descriptionHi: "", startDate: "", endDate: "" });
+  const [newCandidate, setNewCandidate] = useState({ name: "", nameHi: "", party: "", partyHi: "", manifesto: "", manifestoHi: "", constituency: "", constituencyHi: "" });
 
   const totalVotes = getTotalVotes();
   const activeElections = elections.filter(e => e.status === "active").length;
@@ -94,7 +94,9 @@ export default function AdminDashboard() {
     }
     addElection({
       title: newElection.title,
+      titleHi: newElection.titleHi || newElection.title,
       description: newElection.description,
+      descriptionHi: newElection.descriptionHi || newElection.description,
       startDate: newElection.startDate,
       endDate: newElection.endDate,
       candidateCount: 0,
@@ -103,7 +105,7 @@ export default function AdminDashboard() {
     });
     toast({ title: "Election Created", description: `"${newElection.title}" has been created as a draft.` });
     setShowCreateElection(false);
-    setNewElection({ title: "", description: "", startDate: "", endDate: "" });
+    setNewElection({ title: "", titleHi: "", description: "", descriptionHi: "", startDate: "", endDate: "" });
   };
 
   const handleAddCandidate = () => {
@@ -113,13 +115,18 @@ export default function AdminDashboard() {
     }
     addCandidate({
       name: newCandidate.name,
+      nameHi: newCandidate.nameHi || newCandidate.name,
       party: newCandidate.party,
+      partyHi: newCandidate.partyHi || newCandidate.party,
       photo: "/placeholder.svg",
       manifesto: newCandidate.manifesto,
+      manifestoHi: newCandidate.manifestoHi || newCandidate.manifesto,
+      constituency: newCandidate.constituency || "General",
+      constituencyHi: newCandidate.constituencyHi || "सामान्य",
     });
     toast({ title: "Candidate Added", description: `${newCandidate.name} has been added and is pending approval.` });
     setShowAddCandidate(false);
-    setNewCandidate({ name: "", party: "", manifesto: "" });
+    setNewCandidate({ name: "", nameHi: "", party: "", partyHi: "", manifesto: "", manifestoHi: "", constituency: "", constituencyHi: "" });
   };
 
   const handleEmergencyStop = () => {

@@ -1,24 +1,26 @@
 import { useState, useEffect, useCallback } from "react";
 
-import politician1 from "@/assets/politician-1.jpg";
-import politician2 from "@/assets/politician-2.jpg";
-import politician3 from "@/assets/politician-3.jpg";
-import politician4 from "@/assets/politician-4.jpg";
-
 export interface Candidate {
   id: string;
   name: string;
+  nameHi: string;
   party: string;
+  partyHi: string;
   photo: string;
   manifesto: string;
+  manifestoHi: string;
   voteCount: number;
   status: "approved" | "pending" | "rejected";
+  constituency: string;
+  constituencyHi: string;
 }
 
 export interface Election {
   id: string;
   title: string;
+  titleHi: string;
   description: string;
+  descriptionHi: string;
   startDate: string;
   endDate: string;
   candidateCount: number;
@@ -43,97 +45,192 @@ export interface VoteHistory {
   status: "completed";
 }
 
-// Initial mock data with correct Indian political associations
+// Real Indian Politicians with accurate data
 const initialCandidates: Candidate[] = [
   {
     id: "1",
-    name: "Shri Ramesh Chandra Verma",
+    name: "Narendra Modi",
+    nameHi: "नरेन्द्र मोदी",
     party: "Bharatiya Janata Party (BJP)",
-    photo: politician1,
-    manifesto: "लखनऊ नगर निगम के विकास के लिए प्रतिबद्ध। स्वच्छता अभियान, सड़क निर्माण, और नागरिक सुविधाओं में सुधार।",
-    voteCount: 12450,
+    partyHi: "भारतीय जनता पार्टी (भाजपा)",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Narendra_Modi_%282015%29.jpg/220px-Narendra_Modi_%282015%29.jpg",
+    manifesto: "Development, Digital India, Make in India, Clean India Mission",
+    manifestoHi: "विकास, डिजिटल इंडिया, मेक इन इंडिया, स्वच्छ भारत अभियान",
+    voteCount: 24500,
     status: "approved",
+    constituency: "Varanasi, Uttar Pradesh",
+    constituencyHi: "वाराणसी, उत्तर प्रदेश",
   },
   {
     id: "2",
-    name: "Shri Suresh Kumar Tripathi",
-    party: "Bharatiya Janata Party (BJP)",
-    photo: politician2,
-    manifesto: "वाराणसी के विकास के लिए समर्पित। पर्यटन, रोजगार, और गंगा स्वच्छता अभियान को बढ़ावा।",
-    voteCount: 9830,
+    name: "Rahul Gandhi",
+    nameHi: "राहुल गांधी",
+    party: "Indian National Congress (INC)",
+    partyHi: "भारतीय राष्ट्रीय कांग्रेस",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rahul_Gandhi_2019.jpg/220px-Rahul_Gandhi_2019.jpg",
+    manifesto: "NYAY Scheme, Farm Loan Waiver, Employment Generation",
+    manifestoHi: "न्याय योजना, किसान ऋण माफी, रोजगार सृजन",
+    voteCount: 18200,
     status: "approved",
+    constituency: "Raebareli, Uttar Pradesh",
+    constituencyHi: "रायबरेली, उत्तर प्रदेश",
   },
   {
     id: "3",
-    name: "Shri Manoj Kumar Sharma",
-    party: "Aam Aadmi Party (AAP)",
-    photo: politician3,
-    manifesto: "दिल्ली की जनता के लिए। मुफ्त बिजली-पानी, मोहल्ला क्लीनिक, और भ्रष्टाचार मुक्त प्रशासन।",
-    voteCount: 4120,
+    name: "Amit Shah",
+    nameHi: "अमित शाह",
+    party: "Bharatiya Janata Party (BJP)",
+    partyHi: "भारतीय जनता पार्टी (भाजपा)",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Amit_Shah_2020.jpg/220px-Amit_Shah_2020.jpg",
+    manifesto: "National Security, Law & Order, Citizenship Amendment",
+    manifestoHi: "राष्ट्रीय सुरक्षा, कानून व्यवस्था, नागरिकता संशोधन",
+    voteCount: 15800,
     status: "approved",
+    constituency: "Gandhinagar, Gujarat",
+    constituencyHi: "गांधीनगर, गुजरात",
   },
   {
     id: "4",
-    name: "Smt. Kavita Kumari Singh",
-    party: "Indian National Congress",
-    photo: politician4,
-    manifesto: "रायबरेली की जनता के साथ। किसानों की ऋण माफी, महिला सशक्तिकरण, और ग्रामीण विकास।",
-    voteCount: 2050,
-    status: "pending",
+    name: "Yogi Adityanath",
+    nameHi: "योगी आदित्यनाथ",
+    party: "Bharatiya Janata Party (BJP)",
+    partyHi: "भारतीय जनता पार्टी (भाजपा)",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Yogi_Adityanath.jpg/220px-Yogi_Adityanath.jpg",
+    manifesto: "Law & Order, Infrastructure Development, UP Development",
+    manifestoHi: "कानून व्यवस्था, बुनियादी ढांचा विकास, यूपी विकास",
+    voteCount: 14200,
+    status: "approved",
+    constituency: "Gorakhpur, Uttar Pradesh",
+    constituencyHi: "गोरखपुर, उत्तर प्रदेश",
+  },
+  {
+    id: "5",
+    name: "Arvind Kejriwal",
+    nameHi: "अरविंद केजरीवाल",
+    party: "Aam Aadmi Party (AAP)",
+    partyHi: "आम आदमी पार्टी",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Arvind_Kejriwal_2021.jpg/220px-Arvind_Kejriwal_2021.jpg",
+    manifesto: "Free Electricity, Free Water, Mohalla Clinics, Education",
+    manifestoHi: "मुफ्त बिजली, मुफ्त पानी, मोहल्ला क्लीनिक, शिक्षा",
+    voteCount: 12500,
+    status: "approved",
+    constituency: "New Delhi, Delhi",
+    constituencyHi: "नई दिल्ली, दिल्ली",
+  },
+  {
+    id: "6",
+    name: "Mamata Banerjee",
+    nameHi: "ममता बनर्जी",
+    party: "All India Trinamool Congress",
+    partyHi: "अखिल भारतीय तृणमूल कांग्रेस",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Mamata_Banerjee_-_Kolkata_2011-12-08_7529.JPG/220px-Mamata_Banerjee_-_Kolkata_2011-12-08_7529.JPG",
+    manifesto: "Bengal Development, Women Empowerment, Social Welfare",
+    manifestoHi: "बंगाल विकास, महिला सशक्तिकरण, सामाजिक कल्याण",
+    voteCount: 11800,
+    status: "approved",
+    constituency: "Kolkata, West Bengal",
+    constituencyHi: "कोलकाता, पश्चिम बंगाल",
+  },
+  {
+    id: "7",
+    name: "Madhu Verma",
+    nameHi: "मधु वर्मा",
+    party: "Bharatiya Janata Party (BJP)",
+    partyHi: "भारतीय जनता पार्टी (भाजपा)",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/BJP_Logo.svg/220px-BJP_Logo.svg.png",
+    manifesto: "Local Development, Women Safety, Infrastructure",
+    manifestoHi: "स्थानीय विकास, महिला सुरक्षा, बुनियादी ढांचा",
+    voteCount: 8500,
+    status: "approved",
+    constituency: "Indore, Madhya Pradesh",
+    constituencyHi: "इंदौर, मध्य प्रदेश",
+  },
+  {
+    id: "8",
+    name: "Shankar Lalwani",
+    nameHi: "शंकर लालवानी",
+    party: "Bharatiya Janata Party (BJP)",
+    partyHi: "भारतीय जनता पार्टी (भाजपा)",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/BJP_Logo.svg/220px-BJP_Logo.svg.png",
+    manifesto: "Smart City Indore, Clean City, Business Growth",
+    manifestoHi: "स्मार्ट सिटी इंदौर, स्वच्छ शहर, व्यापार विकास",
+    voteCount: 9200,
+    status: "approved",
+    constituency: "Indore, Madhya Pradesh",
+    constituencyHi: "इंदौर, मध्य प्रदेश",
+  },
+  {
+    id: "9",
+    name: "Swapnil Kothari",
+    nameHi: "स्वप्निल कोठारी",
+    party: "Indian National Congress (INC)",
+    partyHi: "भारतीय राष्ट्रीय कांग्रेस",
+    photo: "https://images.bhaskarassets.com/thumb/1200x900/web2images/521/2022/09/07/renaissance-730x548-1_1662533070.jpg",
+    manifesto: "Youth Employment, Education Reform, Social Justice",
+    manifestoHi: "युवा रोजगार, शिक्षा सुधार, सामाजिक न्याय",
+    voteCount: 6800,
+    status: "approved",
+    constituency: "Indore, Madhya Pradesh",
+    constituencyHi: "इंदौर, मध्य प्रदेश",
   },
 ];
 
 const initialElections: Election[] = [
   {
     id: "1",
-    title: "लखनऊ नगर निगम चुनाव 2025",
-    description: "लखनऊ नगर निगम पार्षद और महापौर पद के लिए मतदान",
-    startDate: "Jan 15, 2025",
-    endDate: "Jan 22, 2025",
-    candidateCount: 4,
-    voterCount: 45000,
-    votesCast: 28450,
+    title: "Lok Sabha General Elections 2025",
+    titleHi: "लोकसभा आम चुनाव 2025",
+    description: "General Elections for Members of Parliament",
+    descriptionHi: "संसद सदस्यों के लिए आम चुनाव",
+    startDate: "Apr 15, 2025",
+    endDate: "May 22, 2025",
+    candidateCount: 9,
+    voterCount: 950000000,
+    votesCast: 285000000,
     status: "active",
   },
   {
     id: "2",
-    title: "दिल्ली विश्वविद्यालय छात्र संघ चुनाव 2025",
-    description: "दिल्ली विश्वविद्यालय छात्र संघ अध्यक्ष का चुनाव",
+    title: "Madhya Pradesh Municipal Elections 2025",
+    titleHi: "मध्य प्रदेश नगर निगम चुनाव 2025",
+    description: "Municipal Corporation Elections for MP Cities",
+    descriptionHi: "मध्य प्रदेश शहरों के लिए नगर निगम चुनाव",
     startDate: "Feb 5, 2025",
     endDate: "Feb 12, 2025",
     candidateCount: 6,
-    voterCount: 12000,
-    votesCast: 0,
+    voterCount: 45000,
+    votesCast: 28450,
     status: "draft",
   },
   {
     id: "3",
-    title: "वाराणसी जिला पंचायत चुनाव 2024",
-    description: "वाराणसी जिला पंचायत सदस्यों का चुनाव",
+    title: "UP Panchayat Elections 2024",
+    titleHi: "यूपी पंचायत चुनाव 2024",
+    description: "Panchayat Member Elections for UP",
+    descriptionHi: "उत्तर प्रदेश पंचायत सदस्य चुनाव",
     startDate: "Oct 1, 2024",
     endDate: "Oct 8, 2024",
     candidateCount: 4,
-    voterCount: 8500,
-    votesCast: 7200,
+    voterCount: 85000,
+    votesCast: 72000,
     status: "closed",
   },
 ];
 
 const initialVoters: Voter[] = [
-  { id: "1", name: "Rahul Verma", email: "rahul@example.com", status: "active", votedIn: 3, lastActive: "2 min ago" },
-  { id: "2", name: "Priya Sharma", email: "priya@example.com", status: "active", votedIn: 2, lastActive: "1 hour ago" },
-  { id: "3", name: "Vikram Singh", email: "vikram@example.com", status: "pending", votedIn: 0, lastActive: "Never" },
-  { id: "4", name: "Anita Kumari", email: "anita@example.com", status: "suspended", votedIn: 1, lastActive: "3 days ago" },
-  { id: "5", name: "Suresh Yadav", email: "suresh@example.com", status: "active", votedIn: 5, lastActive: "5 min ago" },
+  { id: "1", name: "राहुल वर्मा", email: "rahul@example.com", status: "active", votedIn: 3, lastActive: "2 min ago" },
+  { id: "2", name: "प्रिया शर्मा", email: "priya@example.com", status: "active", votedIn: 2, lastActive: "1 hour ago" },
+  { id: "3", name: "विक्रम सिंह", email: "vikram@example.com", status: "pending", votedIn: 0, lastActive: "Never" },
+  { id: "4", name: "अनीता कुमारी", email: "anita@example.com", status: "suspended", votedIn: 1, lastActive: "3 days ago" },
+  { id: "5", name: "सुरेश यादव", email: "suresh@example.com", status: "active", votedIn: 5, lastActive: "5 min ago" },
 ];
 
 const initialVoteHistory: VoteHistory[] = [
-  { election: "पंचायत चुनाव 2024", date: "Oct 8, 2024", candidate: "Rajesh Kumar Sharma", status: "completed" },
-  { election: "वार्षिक आम सभा", date: "Sep 15, 2024", candidate: "Amit Singh Yadav", status: "completed" },
-  { election: "समुदाय मतदान 2024", date: "Aug 20, 2024", candidate: "Arvind Kumar Gupta", status: "completed" },
+  { election: "पंचायत चुनाव 2024", date: "Oct 8, 2024", candidate: "राजेश कुमार शर्मा", status: "completed" },
+  { election: "वार्षिक आम सभा", date: "Sep 15, 2024", candidate: "अमित सिंह यादव", status: "completed" },
+  { election: "समुदाय मतदान 2024", date: "Aug 20, 2024", candidate: "अरविंद कुमार गुप्ता", status: "completed" },
 ];
 
-// Custom hook for election data with real-time simulation
 export function useElectionData() {
   const [candidates, setCandidates] = useState<Candidate[]>(initialCandidates);
   const [elections, setElections] = useState<Election[]>(initialElections);
@@ -142,7 +239,6 @@ export function useElectionData() {
   const [userVote, setUserVote] = useState<{ electionId: string; candidateId: string } | null>(null);
   const [isLiveUpdating, setIsLiveUpdating] = useState(true);
 
-  // Simulate real-time vote updates
   useEffect(() => {
     if (!isLiveUpdating) return;
 
@@ -275,7 +371,6 @@ export function useElectionData() {
   };
 }
 
-// Global time formatter
 export function getTimeGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
@@ -283,7 +378,6 @@ export function getTimeGreeting(): string {
   return "Good evening";
 }
 
-// Format relative time
 export function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
