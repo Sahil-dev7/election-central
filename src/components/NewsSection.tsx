@@ -108,22 +108,25 @@ export function NewsSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 group cursor-pointer">
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={news.image}
-                    alt={news.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
+              <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-border/50 hover:border-primary/30">
+                {/* Image with proper aspect ratio */}
+                <div className="relative bg-secondary">
+                  <div className="aspect-video flex items-center justify-center overflow-hidden">
+                    <img
+                      src={news.image}
+                      alt={news.title}
+                      className="w-full h-full object-contain bg-secondary transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
                   <div className="absolute top-3 left-3">
-                    <Badge className="bg-primary/90 text-primary-foreground">
+                    <Badge className="bg-primary/90 text-primary-foreground shadow-md">
                       {news.category}
                     </Badge>
                   </div>
                   {news.isDemo && (
                     <div className="absolute top-3 right-3">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs bg-card/90 backdrop-blur-sm">
                         DEMO
                       </Badge>
                     </div>

@@ -98,78 +98,81 @@ export function HeroCarousel() {
 
   return (
     <section 
-      className="relative w-full h-[60vh] md:h-[70vh] lg:h-[80vh] overflow-hidden"
+      className="relative w-full overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Slides */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.5 }}
-          className="absolute inset-0"
-        >
-          <img
-            src={slides[currentIndex].image}
-            alt={slides[currentIndex].alt}
-            className="w-full h-full object-cover object-center"
-            loading={currentIndex === 0 ? "eager" : "lazy"}
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-election-navy/90 via-election-navy/30 to-transparent" />
-          
-          {/* Caption */}
-          {slides[currentIndex].caption && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="absolute bottom-20 md:bottom-24 left-0 right-0 text-center px-4"
-            >
-              <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
-                {slides[currentIndex].caption}
-              </h2>
-            </motion.div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+      {/* Aspect ratio container - maintains 16:9 ratio */}
+      <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+        {/* Slides */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 flex items-center justify-center bg-election-navy"
+          >
+            <img
+              src={slides[currentIndex].image}
+              alt={slides[currentIndex].alt}
+              className="w-full h-full object-contain"
+              loading={currentIndex === 0 ? "eager" : "lazy"}
+            />
+            {/* Gradient overlay - lighter to preserve image visibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-election-navy/80 via-transparent to-election-navy/20" />
+            
+            {/* Caption */}
+            {slides[currentIndex].caption && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="absolute bottom-16 md:bottom-20 left-0 right-0 text-center px-4"
+              >
+                <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white drop-shadow-lg bg-black/30 inline-block px-6 py-2 rounded-lg backdrop-blur-sm">
+                  {slides[currentIndex].caption}
+                </h2>
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-      {/* Navigation Arrows */}
-      <div className="absolute inset-y-0 left-2 md:left-4 flex items-center z-10">
+      {/* Navigation Arrows - positioned within aspect ratio container */}
+      <div className="absolute top-1/2 -translate-y-1/2 left-2 md:left-4 z-10">
         <Button
           variant="ghost"
           size="icon"
           onClick={prevSlide}
-          className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border border-white/30"
+          className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/50 text-white border border-white/40 shadow-lg"
         >
           <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
         </Button>
       </div>
-      <div className="absolute inset-y-0 right-2 md:right-4 flex items-center z-10">
+      <div className="absolute top-1/2 -translate-y-1/2 right-2 md:right-4 z-10">
         <Button
           variant="ghost"
           size="icon"
           onClick={nextSlide}
-          className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border border-white/30"
+          className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/50 text-white border border-white/40 shadow-lg"
         >
           <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
         </Button>
       </div>
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-4 md:bottom-6 left-0 right-0 flex justify-center gap-2 z-10">
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
+            className={`h-2.5 rounded-full transition-all duration-300 shadow-md ${
               index === currentIndex 
                 ? "w-8 bg-election-gold" 
-                : "w-2 bg-white/50 hover:bg-white/80"
+                : "w-2.5 bg-white/60 hover:bg-white/90"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
