@@ -4,17 +4,43 @@ import {
   Vote, 
   Shield, 
   BarChart3, 
-  Users, 
   CheckCircle2, 
   Lock,
   ArrowRight,
   Globe,
   Fingerprint,
-  Award
+  Award,
+  Moon,
+  Sun
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { NewsSection } from "@/components/NewsSection";
+import { LanguageToggle } from "@/components/LanguageToggle";
+
+// Theme Toggle Component
+function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false);
+  
+  const toggleTheme = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    document.documentElement.classList.toggle('dark', newIsDark);
+  };
+  
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggleTheme}
+      className="h-9 w-9 rounded-full bg-secondary/50 hover:bg-secondary"
+    >
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    </Button>
+  );
+}
+
+import { useState } from "react";
 
 const features = [
   {
@@ -53,35 +79,46 @@ export default function Index() {
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border"
+        className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border shadow-sm"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-md">
                 <Vote className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-foreground">ElectVote</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <div className="hidden md:flex items-center gap-6">
+              <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-2 py-1 rounded-md hover:bg-secondary">
                 विशेषताएं
               </a>
-              <a href="#news" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <a href="#news" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-2 py-1 rounded-md hover:bg-secondary">
                 समाचार
               </a>
-              <a href="#security" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <a href="#security" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-2 py-1 rounded-md hover:bg-secondary">
                 सुरक्षा
               </a>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Link to="/auth">
-                <Button variant="ghost" size="sm">साइन इन</Button>
-              </Link>
-              <Link to="/auth?mode=register">
-                <Button variant="hero" size="sm">शुरू करें</Button>
+            <div className="flex items-center gap-2">
+              {/* Global Controls - Language & Theme */}
+              <LanguageToggle />
+              <ThemeToggle />
+              
+              <div className="hidden sm:flex items-center gap-2 ml-2">
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="font-medium">साइन इन</Button>
+                </Link>
+                <Link to="/auth?mode=register">
+                  <Button variant="hero" size="sm" className="shadow-md">शुरू करें</Button>
+                </Link>
+              </div>
+              
+              {/* Mobile auth buttons */}
+              <Link to="/auth" className="sm:hidden">
+                <Button variant="hero" size="sm">लॉगिन</Button>
               </Link>
             </div>
           </div>

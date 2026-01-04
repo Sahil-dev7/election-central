@@ -43,41 +43,41 @@ export interface VoteHistory {
   status: "completed";
 }
 
-// Initial mock data with Indian politician photos
+// Initial mock data with correct Indian political associations
 const initialCandidates: Candidate[] = [
   {
     id: "1",
-    name: "Rajesh Kumar Sharma",
+    name: "Shri Ramesh Chandra Verma",
     party: "Bharatiya Janata Party (BJP)",
     photo: politician1,
-    manifesto: "विकास और समृद्धि के लिए प्रतिबद्ध। बुनियादी ढांचे का विकास, रोजगार सृजन, और सभी नागरिकों के लिए स्वास्थ्य सेवा सुनिश्चित करना।",
+    manifesto: "लखनऊ नगर निगम के विकास के लिए प्रतिबद्ध। स्वच्छता अभियान, सड़क निर्माण, और नागरिक सुविधाओं में सुधार।",
     voteCount: 12450,
     status: "approved",
   },
   {
     id: "2",
-    name: "Amit Singh Yadav",
+    name: "Shri Suresh Kumar Tripathi",
     party: "Bharatiya Janata Party (BJP)",
     photo: politician2,
-    manifesto: "आत्मनिर्भर भारत की ओर। छोटे व्यापारियों का समर्थन, डिजिटल इंडिया, और युवाओं के लिए कौशल विकास कार्यक्रम।",
+    manifesto: "वाराणसी के विकास के लिए समर्पित। पर्यटन, रोजगार, और गंगा स्वच्छता अभियान को बढ़ावा।",
     voteCount: 9830,
     status: "approved",
   },
   {
     id: "3",
-    name: "Arvind Kumar Gupta",
+    name: "Shri Manoj Kumar Sharma",
     party: "Aam Aadmi Party (AAP)",
     photo: politician3,
-    manifesto: "जनता की सेवा में। मुफ्त बिजली-पानी, उत्कृष्ट शिक्षा, और भ्रष्टाचार मुक्त प्रशासन के लिए समर्पित।",
+    manifesto: "दिल्ली की जनता के लिए। मुफ्त बिजली-पानी, मोहल्ला क्लीनिक, और भ्रष्टाचार मुक्त प्रशासन।",
     voteCount: 4120,
     status: "approved",
   },
   {
     id: "4",
-    name: "Priya Gandhi Devi",
+    name: "Smt. Kavita Kumari Singh",
     party: "Indian National Congress",
     photo: politician4,
-    manifesto: "गरीबों और किसानों के अधिकारों की रक्षा। महिला सशक्तिकरण, ग्रामीण विकास, और सामाजिक न्याय।",
+    manifesto: "रायबरेली की जनता के साथ। किसानों की ऋण माफी, महिला सशक्तिकरण, और ग्रामीण विकास।",
     voteCount: 2050,
     status: "pending",
   },
@@ -86,8 +86,8 @@ const initialCandidates: Candidate[] = [
 const initialElections: Election[] = [
   {
     id: "1",
-    title: "2025 नगर निगम चुनाव",
-    description: "अपने पार्षद और महापौर के लिए मतदान करें",
+    title: "लखनऊ नगर निगम चुनाव 2025",
+    description: "लखनऊ नगर निगम पार्षद और महापौर पद के लिए मतदान",
     startDate: "Jan 15, 2025",
     endDate: "Jan 22, 2025",
     candidateCount: 4,
@@ -97,8 +97,8 @@ const initialElections: Election[] = [
   },
   {
     id: "2",
-    title: "छात्र संघ चुनाव 2025",
-    description: "छात्र संघ अध्यक्ष और सीनेट के लिए वार्षिक चुनाव",
+    title: "दिल्ली विश्वविद्यालय छात्र संघ चुनाव 2025",
+    description: "दिल्ली विश्वविद्यालय छात्र संघ अध्यक्ष का चुनाव",
     startDate: "Feb 5, 2025",
     endDate: "Feb 12, 2025",
     candidateCount: 6,
@@ -108,8 +108,8 @@ const initialElections: Election[] = [
   },
   {
     id: "3",
-    title: "पंचायत चुनाव 2024",
-    description: "ग्राम पंचायत सदस्यों का चुनाव",
+    title: "वाराणसी जिला पंचायत चुनाव 2024",
+    description: "वाराणसी जिला पंचायत सदस्यों का चुनाव",
     startDate: "Oct 1, 2024",
     endDate: "Oct 8, 2024",
     candidateCount: 4,

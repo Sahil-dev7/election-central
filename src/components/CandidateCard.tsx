@@ -53,17 +53,19 @@ export function CandidateCard({
         </motion.div>
       )}
 
-      {/* Photo section - taller to show full face */}
-      <div className="relative h-56 overflow-hidden rounded-t-2xl bg-gradient-to-b from-slate-100 to-slate-200">
-        <img
-          src={photo}
-          alt={name}
-          className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      {/* Photo section - proper aspect ratio to show full image */}
+      <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-b from-secondary to-muted">
+        <div className="aspect-[4/5] flex items-center justify-center p-2">
+          <img
+            src={photo}
+            alt={name}
+            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-102"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent pointer-events-none" />
         
         {/* Party symbol badge */}
-        <div className="absolute bottom-3 left-3 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center overflow-hidden border-2 border-white">
+        <div className="absolute bottom-3 left-3 w-12 h-12 rounded-full bg-card shadow-lg flex items-center justify-center overflow-hidden border-2 border-card">
           <PartySymbol party={party} className="w-9 h-9" />
         </div>
       </div>
