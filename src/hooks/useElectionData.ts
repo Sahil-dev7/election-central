@@ -45,7 +45,7 @@ export interface VoteHistory {
   status: "completed";
 }
 
-// Real Indian Politicians with accurate data
+// Real Indian Politicians with working image URLs
 const initialCandidates: Candidate[] = [
   {
     id: "1",
@@ -53,7 +53,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "नरेन्द्र मोदी",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Narendra_Modi_%282015%29.jpg/220px-Narendra_Modi_%282015%29.jpg",
+    photo: "https://cdn.siasat.com/wp-content/uploads/2024/06/PM-modi-and-Italian-counterpart-Giorgia-Meloni--660x495.jpg",
     manifesto: "Development, Digital India, Make in India, Clean India Mission",
     manifestoHi: "विकास, डिजिटल इंडिया, मेक इन इंडिया, स्वच्छ भारत अभियान",
     voteCount: 24500,
@@ -67,7 +67,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "राहुल गांधी",
     party: "Indian National Congress (INC)",
     partyHi: "भारतीय राष्ट्रीय कांग्रेस",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rahul_Gandhi_2019.jpg/220px-Rahul_Gandhi_2019.jpg",
+    photo: "https://akm-img-a-in.tosshub.com/aajtak/images/story/201703/modi_copy_1490769181_749x421.jpeg",
     manifesto: "NYAY Scheme, Farm Loan Waiver, Employment Generation",
     manifestoHi: "न्याय योजना, किसान ऋण माफी, रोजगार सृजन",
     voteCount: 18200,
@@ -81,7 +81,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "अमित शाह",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Amit_Shah_2020.jpg/220px-Amit_Shah_2020.jpg",
+    photo: "https://i.ytimg.com/vi/opDLvgItFXw/oar2.jpg",
     manifesto: "National Security, Law & Order, Citizenship Amendment",
     manifestoHi: "राष्ट्रीय सुरक्षा, कानून व्यवस्था, नागरिकता संशोधन",
     voteCount: 15800,
@@ -95,7 +95,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "योगी आदित्यनाथ",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Yogi_Adityanath.jpg/220px-Yogi_Adityanath.jpg",
+    photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTGs8AFnjxC9acLoRDbQEdp2V_s-FIhNI2Ei05GB8yw&s=10",
     manifesto: "Law & Order, Infrastructure Development, UP Development",
     manifestoHi: "कानून व्यवस्था, बुनियादी ढांचा विकास, यूपी विकास",
     voteCount: 14200,
@@ -109,7 +109,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "अरविंद केजरीवाल",
     party: "Aam Aadmi Party (AAP)",
     partyHi: "आम आदमी पार्टी",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Arvind_Kejriwal_2021.jpg/220px-Arvind_Kejriwal_2021.jpg",
+    photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqLc3cOys4_MzHXTDJANgnEtZngfTpmJEmlvDukw99S8X8UM626ab8lnt2&s=10",
     manifesto: "Free Electricity, Free Water, Mohalla Clinics, Education",
     manifestoHi: "मुफ्त बिजली, मुफ्त पानी, मोहल्ला क्लीनिक, शिक्षा",
     voteCount: 12500,
@@ -123,7 +123,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "ममता बनर्जी",
     party: "All India Trinamool Congress",
     partyHi: "अखिल भारतीय तृणमूल कांग्रेस",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Mamata_Banerjee_-_Kolkata_2011-12-08_7529.JPG/220px-Mamata_Banerjee_-_Kolkata_2011-12-08_7529.JPG",
+    photo: "https://cdn.siasat.com/wp-content/uploads/2024/06/PM-modi-and-Italian-counterpart-Giorgia-Meloni--660x495.jpg",
     manifesto: "Bengal Development, Women Empowerment, Social Welfare",
     manifestoHi: "बंगाल विकास, महिला सशक्तिकरण, सामाजिक कल्याण",
     voteCount: 11800,
@@ -137,7 +137,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "मधु वर्मा",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/BJP_Logo.svg/220px-BJP_Logo.svg.png",
+    photo: "https://akm-img-a-in.tosshub.com/aajtak/images/story/201703/modi_copy_1490769181_749x421.jpeg",
     manifesto: "Local Development, Women Safety, Infrastructure",
     manifestoHi: "स्थानीय विकास, महिला सुरक्षा, बुनियादी ढांचा",
     voteCount: 8500,
@@ -151,7 +151,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "शंकर लालवानी",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/BJP_Logo.svg/220px-BJP_Logo.svg.png",
+    photo: "https://i.ytimg.com/vi/opDLvgItFXw/oar2.jpg",
     manifesto: "Smart City Indore, Clean City, Business Growth",
     manifestoHi: "स्मार्ट सिटी इंदौर, स्वच्छ शहर, व्यापार विकास",
     voteCount: 9200,

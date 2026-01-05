@@ -60,8 +60,8 @@ export function NewsSection() {
   const { language, t } = useLanguage();
   
   return (
-    <section className="py-10 bg-secondary/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12 bg-secondary/30">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -73,10 +73,10 @@ export function NewsSection() {
             <Newspaper className="w-4 h-4 text-primary" />
             <span className="text-xs font-medium text-primary">{t("news.badge")}</span>
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+          <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
             {t("news.title")}
           </h2>
-          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {t("news.subtitle")}
           </p>
           
@@ -85,8 +85,8 @@ export function NewsSection() {
           </Badge>
         </motion.div>
 
-        {/* News Grid - Compact */}
-        <div className="grid md:grid-cols-3 gap-4">
+        {/* News Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
           {demoNews.map((news, index) => (
             <motion.div
               key={news.id}
@@ -95,14 +95,16 @@ export function NewsSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="h-full overflow-hidden hover:shadow-lg transition-all group cursor-pointer border-border/50 hover:border-primary/30">
-                <div className="relative bg-secondary">
-                  <div className="aspect-video overflow-hidden">
+              <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-border/50 hover:border-primary/30 bg-card">
+                {/* Image container - NO CROPPING */}
+                <div className="relative bg-muted">
+                  <div className="w-full">
                     <img
                       src={news.image}
                       alt={language === "hi" ? news.titleHi : news.titleEn}
-                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                      className="w-full h-auto max-h-48 object-contain mx-auto bg-muted"
                       loading="lazy"
+                      style={{ display: 'block' }}
                     />
                   </div>
                   <div className="absolute top-2 left-2">
@@ -111,14 +113,15 @@ export function NewsSection() {
                     </Badge>
                   </div>
                 </div>
-                <CardContent className="p-3">
-                  <h3 className="font-semibold text-sm text-foreground mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-sm text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                     {language === "hi" ? news.titleHi : news.titleEn}
                   </h3>
-                  <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                  <p className="text-xs text-muted-foreground mb-3 line-clamp-2 leading-relaxed">
                     {language === "hi" ? news.summaryHi : news.summaryEn}
                   </p>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/50">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       <span>{language === "hi" ? news.dateHi : news.dateEn}</span>
