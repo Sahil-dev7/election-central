@@ -1,5 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 
+// Import politician images
+import narendraModiImg from "@/assets/narendra-modi.jpg";
+import yogiAdityanathImg from "@/assets/yogi-adityanath.jpg";
+import arvindKejriwalImg from "@/assets/arvind-kejriwal.jpg";
+import madhuVermaImg from "@/assets/madhu-verma.jpg";
+import shankarLalwaniImg from "@/assets/shankar-lalwani.jpg";
+import mamataBanerjeeImg from "@/assets/mamata-banerjee.jpg";
+import nirmalaSitharamanImg from "@/assets/nirmala-sitharaman.jpg";
+import rahulGandhiImg from "@/assets/rahul-gandhi.jpg";
+import amitShahImg from "@/assets/amit-shah.jpg";
+
 export interface Candidate {
   id: string;
   name: string;
@@ -45,7 +56,7 @@ export interface VoteHistory {
   status: "completed";
 }
 
-// Real Indian Politicians with working image URLs
+// Real Indian Politicians with AI-generated images
 const initialCandidates: Candidate[] = [
   {
     id: "1",
@@ -53,7 +64,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "नरेन्द्र मोदी",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://cdn.siasat.com/wp-content/uploads/2024/06/PM-modi-and-Italian-counterpart-Giorgia-Meloni--660x495.jpg",
+    photo: narendraModiImg,
     manifesto: "Development, Digital India, Make in India, Clean India Mission",
     manifestoHi: "विकास, डिजिटल इंडिया, मेक इन इंडिया, स्वच्छ भारत अभियान",
     voteCount: 24500,
@@ -67,7 +78,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "राहुल गांधी",
     party: "Indian National Congress (INC)",
     partyHi: "भारतीय राष्ट्रीय कांग्रेस",
-    photo: "https://akm-img-a-in.tosshub.com/aajtak/images/story/201703/modi_copy_1490769181_749x421.jpeg",
+    photo: rahulGandhiImg,
     manifesto: "NYAY Scheme, Farm Loan Waiver, Employment Generation",
     manifestoHi: "न्याय योजना, किसान ऋण माफी, रोजगार सृजन",
     voteCount: 18200,
@@ -81,7 +92,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "अमित शाह",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://i.ytimg.com/vi/opDLvgItFXw/oar2.jpg",
+    photo: amitShahImg,
     manifesto: "National Security, Law & Order, Citizenship Amendment",
     manifestoHi: "राष्ट्रीय सुरक्षा, कानून व्यवस्था, नागरिकता संशोधन",
     voteCount: 15800,
@@ -95,7 +106,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "योगी आदित्यनाथ",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTGs8AFnjxC9acLoRDbQEdp2V_s-FIhNI2Ei05GB8yw&s=10",
+    photo: yogiAdityanathImg,
     manifesto: "Law & Order, Infrastructure Development, UP Development",
     manifestoHi: "कानून व्यवस्था, बुनियादी ढांचा विकास, यूपी विकास",
     voteCount: 14200,
@@ -109,7 +120,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "अरविंद केजरीवाल",
     party: "Aam Aadmi Party (AAP)",
     partyHi: "आम आदमी पार्टी",
-    photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqLc3cOys4_MzHXTDJANgnEtZngfTpmJEmlvDukw99S8X8UM626ab8lnt2&s=10",
+    photo: arvindKejriwalImg,
     manifesto: "Free Electricity, Free Water, Mohalla Clinics, Education",
     manifestoHi: "मुफ्त बिजली, मुफ्त पानी, मोहल्ला क्लीनिक, शिक्षा",
     voteCount: 12500,
@@ -123,7 +134,7 @@ const initialCandidates: Candidate[] = [
     nameHi: "ममता बनर्जी",
     party: "All India Trinamool Congress",
     partyHi: "अखिल भारतीय तृणमूल कांग्रेस",
-    photo: "https://cdn.siasat.com/wp-content/uploads/2024/06/PM-modi-and-Italian-counterpart-Giorgia-Meloni--660x495.jpg",
+    photo: mamataBanerjeeImg,
     manifesto: "Bengal Development, Women Empowerment, Social Welfare",
     manifestoHi: "बंगाल विकास, महिला सशक्तिकरण, सामाजिक कल्याण",
     voteCount: 11800,
@@ -133,11 +144,25 @@ const initialCandidates: Candidate[] = [
   },
   {
     id: "7",
+    name: "Nirmala Sitharaman",
+    nameHi: "निर्मला सीतारमण",
+    party: "Bharatiya Janata Party (BJP)",
+    partyHi: "भारतीय जनता पार्टी (भाजपा)",
+    photo: nirmalaSitharamanImg,
+    manifesto: "Economic Growth, Tax Reforms, Financial Inclusion",
+    manifestoHi: "आर्थिक विकास, कर सुधार, वित्तीय समावेशन",
+    voteCount: 10500,
+    status: "approved",
+    constituency: "Karnataka, South India",
+    constituencyHi: "कर्नाटक, दक्षिण भारत",
+  },
+  {
+    id: "8",
     name: "Madhu Verma",
     nameHi: "मधु वर्मा",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://akm-img-a-in.tosshub.com/aajtak/images/story/201703/modi_copy_1490769181_749x421.jpeg",
+    photo: madhuVermaImg,
     manifesto: "Local Development, Women Safety, Infrastructure",
     manifestoHi: "स्थानीय विकास, महिला सुरक्षा, बुनियादी ढांचा",
     voteCount: 8500,
@@ -146,12 +171,12 @@ const initialCandidates: Candidate[] = [
     constituencyHi: "इंदौर, मध्य प्रदेश",
   },
   {
-    id: "8",
+    id: "9",
     name: "Shankar Lalwani",
     nameHi: "शंकर लालवानी",
     party: "Bharatiya Janata Party (BJP)",
     partyHi: "भारतीय जनता पार्टी (भाजपा)",
-    photo: "https://i.ytimg.com/vi/opDLvgItFXw/oar2.jpg",
+    photo: shankarLalwaniImg,
     manifesto: "Smart City Indore, Clean City, Business Growth",
     manifestoHi: "स्मार्ट सिटी इंदौर, स्वच्छ शहर, व्यापार विकास",
     voteCount: 9200,
@@ -160,7 +185,7 @@ const initialCandidates: Candidate[] = [
     constituencyHi: "इंदौर, मध्य प्रदेश",
   },
   {
-    id: "9",
+    id: "10",
     name: "Swapnil Kothari",
     nameHi: "स्वप्निल कोठारी",
     party: "Indian National Congress (INC)",
@@ -168,7 +193,7 @@ const initialCandidates: Candidate[] = [
     photo: "https://images.bhaskarassets.com/thumb/1200x900/web2images/521/2022/09/07/renaissance-730x548-1_1662533070.jpg",
     manifesto: "Youth Employment, Education Reform, Social Justice",
     manifestoHi: "युवा रोजगार, शिक्षा सुधार, सामाजिक न्याय",
-    voteCount: 6800,
+    voteCount: 32000, // Winning by majority
     status: "approved",
     constituency: "Indore, Madhya Pradesh",
     constituencyHi: "इंदौर, मध्य प्रदेश",
@@ -184,9 +209,9 @@ const initialElections: Election[] = [
     descriptionHi: "संसद सदस्यों के लिए आम चुनाव",
     startDate: "Apr 15, 2025",
     endDate: "May 22, 2025",
-    candidateCount: 9,
-    voterCount: 950000000,
-    votesCast: 285000000,
+    candidateCount: 10,
+    voterCount: 96800000, // Fixed: ~9.68 crore voters
+    votesCast: 28500000,
     status: "active",
   },
   {

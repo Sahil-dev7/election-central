@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+import newsRenaissanceImg from "@/assets/news-renaissance.png";
+
 interface NewsItem {
   id: number;
   titleEn: string;
@@ -20,25 +22,25 @@ interface NewsItem {
 const demoNews: NewsItem[] = [
   {
     id: 1,
-    titleEn: "Lok Sabha Elections 2025: EC Announces Schedule",
-    titleHi: "लोकसभा चुनाव 2025: निर्वाचन आयोग ने तारीखों की घोषणा की",
-    summaryEn: "Election Commission releases schedule for upcoming Lok Sabha elections. Voting to be held in 7 phases across all states.",
-    summaryHi: "भारत निर्वाचन आयोग ने आगामी लोकसभा चुनावों के लिए कार्यक्रम जारी किया।",
-    image: "https://cdn.siasat.com/wp-content/uploads/2024/06/PM-modi-and-Italian-counterpart-Giorgia-Meloni--660x495.jpg",
-    categoryEn: "Elections",
-    categoryHi: "चुनाव समाचार",
+    titleEn: "Renaissance University Students Launch ElectVote Platform",
+    titleHi: "रेनेसां विश्वविद्यालय के छात्रों ने ElectVote प्लेटफॉर्म लॉन्च किया",
+    summaryEn: "Students from Renaissance University, Indore have developed a secure digital voting platform to modernize democratic processes.",
+    summaryHi: "इंदौर के रेनेसां विश्वविद्यालय के छात्रों ने लोकतांत्रिक प्रक्रियाओं को आधुनिक बनाने के लिए एक सुरक्षित डिजिटल मतदान प्लेटफॉर्म विकसित किया है।",
+    image: newsRenaissanceImg,
+    categoryEn: "Technology",
+    categoryHi: "प्रौद्योगिकी",
     dateEn: "2 hours ago",
     dateHi: "2 घंटे पहले",
   },
   {
     id: 2,
-    titleEn: "EVM and VVPAT Security Enhanced",
-    titleHi: "EVM और VVPAT की सुरक्षा पर विशेष ध्यान",
-    summaryEn: "Election Commission issues new guidelines for EVM security. Three-tier security system to be implemented.",
-    summaryHi: "निर्वाचन आयोग ने EVM मशीनों की सुरक्षा के लिए नई गाइडलाइंस जारी की हैं।",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTGs8AFnjxC9acLoRDbQEdp2V_s-FIhNI2Ei05GB8yw&s=10",
-    categoryEn: "Security",
-    categoryHi: "सुरक्षा",
+    titleEn: "Lok Sabha Elections 2025: EC Announces Schedule",
+    titleHi: "लोकसभा चुनाव 2025: निर्वाचन आयोग ने तारीखों की घोषणा की",
+    summaryEn: "Election Commission releases schedule for upcoming Lok Sabha elections. Voting to be held in 7 phases across all states.",
+    summaryHi: "भारत निर्वाचन आयोग ने आगामी लोकसभा चुनावों के लिए कार्यक्रम जारी किया।",
+    image: "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=600&h=400&fit=crop",
+    categoryEn: "Elections",
+    categoryHi: "चुनाव समाचार",
     dateEn: "5 hours ago",
     dateHi: "5 घंटे पहले",
   },
@@ -48,7 +50,7 @@ const demoNews: NewsItem[] = [
     titleHi: "ऑनलाइन मतदाता पंजीकरण में 40% वृद्धि",
     summaryEn: "Record increase in online voter registration under Digital India initiative. Significant rise in young voters.",
     summaryHi: "डिजिटल इंडिया अभियान के तहत ऑनलाइन वोटर रजिस्ट्रेशन में रिकॉर्ड वृद्धि।",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqLc3cOys4_MzHXTDJANgnEtZngfTpmJEmlvDukw99S8X8UM626ab8lnt2&s=10",
+    image: "https://images.unsplash.com/photo-1494172961521-33799ddd43a5?w=600&h=400&fit=crop",
     categoryEn: "Digital India",
     categoryHi: "डिजिटल भारत",
     dateEn: "1 day ago",
@@ -61,7 +63,7 @@ export function NewsSection() {
   
   return (
     <section className="py-12 bg-secondary/30">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -79,14 +81,10 @@ export function NewsSection() {
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {t("news.subtitle")}
           </p>
-          
-          <Badge variant="outline" className="mt-3 border-amber-500/50 text-amber-600 bg-amber-50 text-xs">
-            📌 {t("news.demo")}
-          </Badge>
         </motion.div>
 
         {/* News Grid */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-5">
           {demoNews.map((news, index) => (
             <motion.div
               key={news.id}
@@ -98,13 +96,12 @@ export function NewsSection() {
               <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-border/50 hover:border-primary/30 bg-card">
                 {/* Image container - NO CROPPING */}
                 <div className="relative bg-muted">
-                  <div className="w-full">
+                  <div className="aspect-video w-full overflow-hidden">
                     <img
                       src={news.image}
                       alt={language === "hi" ? news.titleHi : news.titleEn}
-                      className="w-full h-auto max-h-48 object-contain mx-auto bg-muted"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
-                      style={{ display: 'block' }}
                     />
                   </div>
                   <div className="absolute top-2 left-2">

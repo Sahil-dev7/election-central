@@ -41,7 +41,7 @@ function ThemeToggle() {
 }
 
 export default function Index() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   
   const features = [
     {
@@ -300,8 +300,15 @@ export default function Index() {
                 <span className="text-[9px] text-white/60">{t("general.tagline")}</span>
               </div>
             </div>
+            <div className="flex items-center gap-4">
+              <Link to="/developers" className="text-xs text-white/60 hover:text-white transition-colors">
+                {language === "hi" ? "डेवलपर्स" : "Developers"}
+              </Link>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-white/10 text-center">
             <p className="text-xs text-white/60">
-              {t("footer.rights")}
+              © 2025 ElectVote. All images and data rights reserved by Renaissance University owner project college
             </p>
           </div>
         </div>

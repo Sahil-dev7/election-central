@@ -220,6 +220,53 @@ export default function SuperAdminDashboard() {
           />
         </div>
 
+        {/* Quick Actions for Super Admin */}
+        <section className="glass-card-elevated p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Super Admin Actions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "Database Backup", description: "Creating full database backup..." })}
+            >
+              <Download className="w-5 h-5" />
+              <span className="text-xs">Backup DB</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "Security Scan", description: "Running security audit..." })}
+            >
+              <Shield className="w-5 h-5" />
+              <span className="text-xs">Security Scan</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "Clear Cache", description: "System cache cleared successfully!" })}
+            >
+              <RefreshCw className="w-5 h-5" />
+              <span className="text-xs">Clear Cache</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "System Logs", description: "Opening detailed system logs..." })}
+            >
+              <Activity className="w-5 h-5" />
+              <span className="text-xs">View Logs</span>
+            </Button>
+            <Button 
+              variant="destructive" 
+              className="h-20 flex-col gap-2"
+              onClick={handleEmergencyStop}
+            >
+              <Power className="w-5 h-5" />
+              <span className="text-xs">Emergency Stop</span>
+            </Button>
+          </div>
+        </section>
+
         {/* System Metrics */}
         <section>
           <div className="flex items-center justify-between mb-4">

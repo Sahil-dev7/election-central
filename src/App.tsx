@@ -14,6 +14,7 @@ import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import SettingsPage from "./pages/SettingsPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
 import ResultsPage from "./pages/ResultsPage";
+import DevelopersPage from "./pages/DevelopersPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      
+      {/* Developers Page */}
+      <Route path="/developers" element={<DevelopersPage />} />
       
       {/* Auto-redirect to appropriate dashboard */}
       <Route path="/home" element={<RoleBasedRedirect />} />

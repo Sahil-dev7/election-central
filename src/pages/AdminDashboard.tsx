@@ -54,9 +54,10 @@ import { useElectionData, getTimeGreeting } from "@/hooks/useElectionData";
 
 const recentActivity = [
   { type: "vote", message: "New vote cast in Municipal Elections", time: "2 min ago", icon: Vote },
-  { type: "user", message: "New voter registration: Sarah Williams", time: "15 min ago", icon: Users },
-  { type: "election", message: "Student Union Elections scheduled", time: "1 hour ago", icon: Calendar },
+  { type: "user", message: "New voter registration: Priya Sharma", time: "15 min ago", icon: Users },
+  { type: "election", message: "Lok Sabha Elections updated", time: "1 hour ago", icon: Calendar },
   { type: "alert", message: "High voter turnout detected", time: "2 hours ago", icon: TrendingUp },
+  { type: "vote", message: "50 votes cast in last hour", time: "3 hours ago", icon: Vote },
 ];
 
 export default function AdminDashboard() {
@@ -222,8 +223,47 @@ export default function AdminDashboard() {
             subtitle="Last 30 days"
             icon={TrendingUp}
             variant="success"
-          />
+        />
         </div>
+
+        {/* Quick Actions Section */}
+        <section className="glass-card-elevated p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "Bulk Import", description: "Opening voter import wizard..." })}
+            >
+              <Users className="w-5 h-5" />
+              <span className="text-xs">Import Voters</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "Generate Report", description: "Preparing election report..." })}
+            >
+              <Download className="w-5 h-5" />
+              <span className="text-xs">Generate Report</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "Send Notification", description: "Opening notification composer..." })}
+            >
+              <AlertCircle className="w-5 h-5" />
+              <span className="text-xs">Send Alert</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => toast({ title: "Backup Data", description: "Creating secure backup..." })}
+            >
+              <Lock className="w-5 h-5" />
+              <span className="text-xs">Backup Data</span>
+            </Button>
+          </div>
+        </section>
 
         {/* Live Voting Stats */}
         <section className="glass-card-elevated p-6">
