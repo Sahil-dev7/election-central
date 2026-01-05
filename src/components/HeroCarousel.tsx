@@ -105,14 +105,14 @@ export function HeroCarousel() {
   const caption = language === "hi" ? currentSlide.captionHi : currentSlide.captionEn;
 
   return (
-    <section 
-      className="relative w-full overflow-hidden"
+    <div 
+      className="relative w-full"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Fixed height container */}
-      <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh]">
+      {/* Image container - auto height based on image aspect ratio */}
+      <div className="relative w-full">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -120,16 +120,19 @@ export function HeroCarousel() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 bg-election-navy"
+            className="relative w-full bg-election-navy"
           >
+            {/* Image with natural aspect ratio - NO CROPPING */}
             <img
               src={currentSlide.image}
               alt={alt}
-              className="w-full h-full object-cover"
+              className="w-full h-auto max-h-[60vh] object-contain mx-auto"
               loading={currentIndex === 0 ? "eager" : "lazy"}
+              style={{ display: 'block' }}
             />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-election-navy via-election-navy/40 to-transparent" />
+            
+            {/* Gradient overlay at bottom for caption */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-election-navy via-election-navy/60 to-transparent" />
             
             {/* Caption */}
             {caption && (
@@ -137,9 +140,9 @@ export function HeroCarousel() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="absolute bottom-24 md:bottom-32 left-0 right-0 text-center px-4"
+                className="absolute bottom-16 left-0 right-0 text-center px-4"
               >
-                <span className="text-lg md:text-xl font-bold text-white drop-shadow-lg bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm">
+                <span className="text-base md:text-lg font-semibold text-white drop-shadow-lg bg-black/50 px-4 py-2 rounded-lg inline-block">
                   {caption}
                 </span>
               </motion.div>
@@ -149,22 +152,22 @@ export function HeroCarousel() {
       </div>
 
       {/* Navigation Arrows */}
-      <div className="absolute top-1/2 -translate-y-1/2 left-2 md:left-4 z-10">
+      <div className="absolute top-1/2 -translate-y-1/2 left-3 z-10">
         <Button
           variant="ghost"
           size="icon"
           onClick={prevSlide}
-          className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white"
+          className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white border-0"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
       </div>
-      <div className="absolute top-1/2 -translate-y-1/2 right-2 md:right-4 z-10">
+      <div className="absolute top-1/2 -translate-y-1/2 right-3 z-10">
         <Button
           variant="ghost"
           size="icon"
           onClick={nextSlide}
-          className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white"
+          className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white border-0"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>
@@ -185,6 +188,6 @@ export function HeroCarousel() {
           />
         ))}
       </div>
-    </section>
+    </div>
   );
 }

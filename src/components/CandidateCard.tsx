@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Check, Vote } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PartySymbol } from "./PartySymbols";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CandidateCardProps {
   id: string;
@@ -28,17 +29,20 @@ export function CandidateCard({
   voteCount,
   totalVotes,
 }: CandidateCardProps) {
+  const { language } = useLanguage();
   const percentage = totalVotes && voteCount ? Math.round((voteCount / totalVotes) * 100) : 0;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -2 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        "candidate-card group cursor-pointer",
-        isSelected && "selected"
+        "relative overflow-hidden rounded-xl bg-card border-2 transition-all duration-300 cursor-pointer",
+        isSelected 
+          ? "border-election-gold shadow-lg" 
+          : "border-border/50 hover:border-primary/30 hover:shadow-md"
       )}
       onClick={() => onSelect?.(id)}
     >
@@ -47,80 +51,86 @@ export function CandidateCard({
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-election-gold flex items-center justify-center shadow-lg"
+          className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-election-gold flex items-center justify-center shadow-md"
         >
-          <Check className="w-5 h-5 text-foreground" />
+          <Check className="w-4 h-4 text-foreground" />
         </motion.div>
       )}
 
-      {/* Photo section - proper aspect ratio to show full image */}
-      <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-b from-secondary to-muted">
-        <div className="aspect-[4/5] flex items-center justify-center p-2">
+      {/* Photo section - NO CROPPING, show full image */}
+      <div className="relative bg-muted">
+        <div className="w-full p-3">
           <img
             src={photo}
             alt={name}
-            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-102"
+            className="w-full h-auto max-h-48 object-contain mx-auto rounded-lg"
+            loading="lazy"
+            style={{ display: 'block' }}
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent pointer-events-none" />
         
         {/* Party symbol badge */}
-        <div className="absolute bottom-3 left-3 w-12 h-12 rounded-full bg-card shadow-lg flex items-center justify-center overflow-hidden border-2 border-card">
-          <PartySymbol party={party} className="w-9 h-9" />
+        <div className="absolute bottom-2 left-3 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center overflow-hidden border-2 border-card">
+          <PartySymbol party={party} className="w-7 h-7" />
         </div>
       </div>
 
       {/* Content section */}
-      <div className="p-5">
-        <h3 className="text-lg font-bold text-foreground mb-1 leading-tight">{name}</h3>
-        <div className="flex items-center gap-2 mb-3">
+      <div className="p-4">
+        <h3 className="text-base font-bold text-foreground mb-1 leading-tight">{name}</h3>
+        <div className="flex items-center gap-2 mb-2">
           <PartySymbol party={party} className="w-4 h-4" />
-          <p className="text-xs font-medium text-election-blue">{party}</p>
+          <p className="text-xs font-medium text-primary truncate">{party}</p>
         </div>
         
         {manifesto && (
-          <p className="text-xs text-muted-foreground line-clamp-2 mb-4">
+          <p className="text-xs text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
             {manifesto}
           </p>
         )}
 
         {/* Vote count bar */}
         {voteCount !== undefined && totalVotes !== undefined && (
-          <div className="mb-4">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-muted-foreground">वोट / Votes</span>
+          <div className="mb-3">
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-muted-foreground">
+                {language === "hi" ? "वोट" : "Votes"}
+              </span>
               <span className="font-semibold text-foreground">{voteCount.toLocaleString()}</span>
             </div>
-            <div className="h-2 bg-secondary rounded-full overflow-hidden">
+            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${percentage}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-election-blue to-election-gold rounded-full"
+                className="h-full bg-gradient-to-r from-primary to-election-gold rounded-full"
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-1 text-right">{percentage}%</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5 text-right">{percentage}%</p>
           </div>
         )}
 
         {/* Vote button */}
         {showVoteButton && (
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
             className={cn(
-              "w-full py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2",
+              "w-full py-2.5 rounded-lg font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2",
               isSelected
-                ? "bg-election-gold text-foreground shadow-lg"
-                : "bg-secondary text-secondary-foreground hover:bg-election-blue hover:text-white"
+                ? "bg-election-gold text-foreground"
+                : "bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground"
             )}
             onClick={(e) => {
               e.stopPropagation();
               onSelect?.(id);
             }}
           >
-            <Vote className="w-5 h-5" />
-            {isSelected ? "चयनित ✓" : "उम्मीदवार चुनें"}
+            <Vote className="w-4 h-4" />
+            {isSelected 
+              ? (language === "hi" ? "चयनित ✓" : "Selected ✓")
+              : (language === "hi" ? "चुनें" : "Select")
+            }
           </motion.button>
         )}
       </div>
