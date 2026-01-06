@@ -32,19 +32,19 @@ const slides: CarouselSlide[] = [
   },
   {
     id: 3,
-    image: "https://i.ytimg.com/vi/opDLvgItFXw/oar2.jpg",
-    altEn: "Finance Minister Nirmala Sitharaman",
-    altHi: "वित्त मंत्री श्रीमती निर्मला सीतारमण",
-    captionEn: "Budget & Economic Policy",
-    captionHi: "बजट और आर्थिक नीति",
-  },
-  {
-    id: 4,
     image: "https://images.bhaskarassets.com/thumb/1200x900/web2images/521/2022/09/07/renaissance-730x548-1_1662533070.jpg",
     altEn: "Swapnil Kothari - Congress Leader",
     altHi: "स्वप्निल कोठारी - कांग्रेस नेता",
     captionEn: "Youth Politics",
     captionHi: "युवा राजनीति",
+  },
+  {
+    id: 4,
+    image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200&h=800&fit=crop",
+    altEn: "Digital India Initiative",
+    altHi: "डिजिटल भारत पहल",
+    captionEn: "Empowering Digital Democracy",
+    captionHi: "डिजिटल लोकतंत्र को सशक्त बनाना",
   },
 ];
 
