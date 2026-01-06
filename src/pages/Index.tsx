@@ -276,11 +276,11 @@ export default function Index() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
-                <Link to="/contact">
+                <a href="mailto:sahilwadhwani712@gmail.com">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white/10 text-white border-white/30 hover:bg-white/20">
                     {t("cta.contact")}
                   </Button>
-                </Link>
+                </a>
               </div>
             </motion.div>
           </div>
