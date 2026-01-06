@@ -17,25 +17,11 @@ const developers = [
   {
     name: "Sahil Wadhwani",
     nameHi: "साहिल वाधवानी",
-    role: "Lead Full Stack Developer & Project Head",
-    roleHi: "लीड फुल स्टैक डेवलपर और प्रोजेक्ट हेड",
+    role: "Full Stack Developer",
+    roleHi: "फुल स्टैक डेवलपर",
     photo: devSahilImg,
-    description: "Visionary leader who architected the entire ElectVote platform. Designed the database schema, built all core APIs, implemented security protocols, and led the team through every challenge. His dedication and 18-hour coding sessions made this project possible.",
-    descriptionHi: "दूरदर्शी नेता जिन्होंने पूरे ElectVote प्लेटफॉर्म को डिज़ाइन किया। डेटाबेस स्कीमा डिज़ाइन किया, सभी कोर API बनाए, सुरक्षा प्रोटोकॉल लागू किए, और हर चुनौती में टीम का नेतृत्व किया। उनके समर्पण और 18 घंटे की कोडिंग सेशन ने इस प्रोजेक्ट को संभव बनाया।",
-    contributions: [
-      "System Architecture & Database Design",
-      "Backend APIs & Authentication",
-      "Security Implementation",
-      "Team Leadership & Code Review",
-      "DevOps & Deployment"
-    ],
-    contributionsHi: [
-      "सिस्टम आर्किटेक्चर और डेटाबेस डिज़ाइन",
-      "बैकएंड API और प्रमाणीकरण",
-      "सुरक्षा कार्यान्वयन",
-      "टीम नेतृत्व और कोड रिव्यू",
-      "DevOps और डिप्लॉयमेंट"
-    ],
+    tagline: "Turning ideas into reality, one line of code at a time",
+    taglineHi: "कोड की एक-एक लाइन से सपनों को साकार करना",
     isLead: true,
   },
   {
@@ -44,18 +30,8 @@ const developers = [
     role: "Backend Developer",
     roleHi: "बैकएंड डेवलपर",
     photo: devRoshanImg,
-    description: "Database optimization expert who helped build robust data models. Worked closely with Sahil on API development and testing.",
-    descriptionHi: "डेटाबेस ऑप्टिमाइज़ेशन विशेषज्ञ जिन्होंने मजबूत डेटा मॉडल बनाने में मदद की। API विकास और परीक्षण पर साहिल के साथ मिलकर काम किया।",
-    contributions: [
-      "Database Queries Optimization",
-      "API Testing & Documentation",
-      "Data Validation Logic"
-    ],
-    contributionsHi: [
-      "डेटाबेस क्वेरी ऑप्टिमाइज़ेशन",
-      "API परीक्षण और दस्तावेज़ीकरण",
-      "डेटा वैलिडेशन लॉजिक"
-    ],
+    tagline: "Building strong foundations for seamless experiences",
+    taglineHi: "बेहतरीन अनुभव के लिए मजबूत नींव रखना",
     isLead: false,
   },
   {
@@ -64,18 +40,8 @@ const developers = [
     role: "UI/UX Designer",
     roleHi: "UI/UX डिज़ाइनर",
     photo: devSakshiImg,
-    description: "Creative designer who crafted the visual identity of ElectVote. Created wireframes, mockups, and design system components.",
-    descriptionHi: "रचनात्मक डिज़ाइनर जिन्होंने ElectVote की विज़ुअल पहचान बनाई। वायरफ्रेम, मॉकअप और डिज़ाइन सिस्टम कंपोनेंट बनाए।",
-    contributions: [
-      "UI/UX Design & Wireframes",
-      "Color Scheme & Typography",
-      "User Flow Diagrams"
-    ],
-    contributionsHi: [
-      "UI/UX डिज़ाइन और वायरफ्रेम",
-      "रंग योजना और टाइपोग्राफी",
-      "उपयोगकर्ता प्रवाह आरेख"
-    ],
+    tagline: "Designing experiences that users love",
+    taglineHi: "ऐसे अनुभव डिज़ाइन करना जो उपयोगकर्ता पसंद करें",
     isLead: false,
   },
   {
@@ -84,18 +50,8 @@ const developers = [
     role: "Frontend Developer",
     roleHi: "फ्रंटएंड डेवलपर",
     photo: devRishikaImg,
-    description: "React specialist who implemented responsive components and animations. Ensured pixel-perfect designs across all devices.",
-    descriptionHi: "React विशेषज्ञ जिन्होंने रेस्पॉन्सिव कंपोनेंट और एनिमेशन लागू किए। सभी डिवाइस पर पिक्सेल-परफेक्ट डिज़ाइन सुनिश्चित किया।",
-    contributions: [
-      "React Components Development",
-      "Responsive Design Implementation",
-      "Animation & Transitions"
-    ],
-    contributionsHi: [
-      "React कंपोनेंट विकास",
-      "रेस्पॉन्सिव डिज़ाइन कार्यान्वयन",
-      "एनिमेशन और ट्रांज़िशन"
-    ],
+    tagline: "Crafting pixels into beautiful interfaces",
+    taglineHi: "पिक्सल को खूबसूरत इंटरफेस में बदलना",
     isLead: false,
   },
 ];
@@ -227,22 +183,12 @@ export default function DevelopersPage() {
                   <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
                     {language === "hi" ? leadDev.nameHi : leadDev.name}
                   </h2>
-                  <p className="text-primary font-semibold mb-4">
+                  <p className="text-primary font-semibold mb-3">
                     {language === "hi" ? leadDev.roleHi : leadDev.role}
                   </p>
-                  <p className="text-muted-foreground leading-relaxed mb-6">
-                    {language === "hi" ? leadDev.descriptionHi : leadDev.description}
+                  <p className="text-muted-foreground italic text-sm">
+                    "{language === "hi" ? leadDev.taglineHi : leadDev.tagline}"
                   </p>
-
-                  {/* Contributions */}
-                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                    {(language === "hi" ? leadDev.contributionsHi : leadDev.contributions).map((item, i) => (
-                      <Badge key={i} variant="secondary" className="text-xs px-3 py-1">
-                        <Sparkles className="w-3 h-3 mr-1" />
-                        {item}
-                      </Badge>
-                    ))}
-                  </div>
 
                   {/* Social Links */}
                   <div className="flex items-center gap-3 mt-6 justify-center md:justify-start">
@@ -306,21 +252,12 @@ export default function DevelopersPage() {
                 <h3 className="text-lg font-bold text-foreground text-center">
                   {language === "hi" ? dev.nameHi : dev.name}
                 </h3>
-                <p className="text-sm font-medium text-primary text-center mb-3">
+                <p className="text-sm font-medium text-primary text-center mb-2">
                   {language === "hi" ? dev.roleHi : dev.role}
                 </p>
-                <p className="text-xs text-muted-foreground text-center mb-4 leading-relaxed">
-                  {language === "hi" ? dev.descriptionHi : dev.description}
+                <p className="text-xs text-muted-foreground text-center italic">
+                  "{language === "hi" ? dev.taglineHi : dev.tagline}"
                 </p>
-
-                {/* Contributions */}
-                <div className="flex flex-wrap gap-1 justify-center">
-                  {(language === "hi" ? dev.contributionsHi : dev.contributions).map((item, j) => (
-                    <Badge key={j} variant="outline" className="text-[10px] px-2 py-0.5">
-                      {item}
-                    </Badge>
-                  ))}
-                </div>
 
                 {/* Social Links */}
                 <div className="flex items-center gap-2 mt-4 justify-center">
