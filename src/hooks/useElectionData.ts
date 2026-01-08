@@ -282,6 +282,12 @@ export function useElectionData() {
   }, [isLiveUpdating]);
 
   const castVote = useCallback((electionId: string, candidateId: string) => {
+    // CRITICAL: Prevent double voting - check if user already voted in this election
+    if (userVote && userVote.electionId === electionId) {
+      console.warn("Attempt to vote twice in same election blocked");
+      return false; // Vote rejected - already voted in this election
+    }
+
     setCandidates(prev =>
       prev.map(c =>
         c.id === candidateId ? { ...c, voteCount: c.voteCount + 1 } : c
@@ -302,7 +308,8 @@ export function useElectionData() {
         ...prev
       ]);
     }
-  }, [candidates, elections]);
+    return true; // Vote accepted
+  }, [candidates, elections, userVote]);
 
   const approveCandidate = useCallback((candidateId: string) => {
     setCandidates(prev =>

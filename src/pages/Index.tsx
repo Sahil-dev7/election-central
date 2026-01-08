@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { 
@@ -10,35 +9,13 @@ import {
   ArrowRight,
   Globe,
   Fingerprint,
-  Moon,
-  Sun
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { NewsSection } from "@/components/NewsSection";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
-  
-  const toggleTheme = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    document.documentElement.classList.toggle('dark', newIsDark);
-  };
-  
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={toggleTheme}
-      className="h-9 w-9 rounded-full bg-secondary/50 hover:bg-secondary"
-    >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </Button>
-  );
-}
 
 export default function Index() {
   const { language, t } = useLanguage();

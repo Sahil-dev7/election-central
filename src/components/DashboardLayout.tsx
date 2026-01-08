@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
@@ -196,6 +197,7 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
           </div>
           <div className="flex items-center gap-4">
             <LanguageToggle />
+            <ThemeToggle />
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-election-gold" />

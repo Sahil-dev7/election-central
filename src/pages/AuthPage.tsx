@@ -20,6 +20,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const demoAccounts = [
   { role: "super_admin" as UserRole, email: "super@electvote.com", label: "Super Admin", icon: Crown, description: "Full system control" },
@@ -98,6 +100,19 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex">
+      {/* Top controls on left panel */}
+      <div className="absolute top-4 left-4 right-1/2 flex items-center justify-between z-20">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <Vote className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-sm font-semibold text-foreground">ElectVote</span>
+        </Link>
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <ThemeToggle />
+        </div>
+      </div>
       {/* Left panel - Form */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background">
         <motion.div

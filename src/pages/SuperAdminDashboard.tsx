@@ -227,7 +227,8 @@ export default function SuperAdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Database Backup", description: "Creating full database backup..." })}
+              disabled
+              title="Database backup feature coming soon"
             >
               <Download className="w-5 h-5" />
               <span className="text-xs">Backup DB</span>
@@ -235,7 +236,8 @@ export default function SuperAdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Security Scan", description: "Running security audit..." })}
+              disabled
+              title="Security audit feature coming soon"
             >
               <Shield className="w-5 h-5" />
               <span className="text-xs">Security Scan</span>
@@ -243,7 +245,8 @@ export default function SuperAdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Clear Cache", description: "System cache cleared successfully!" })}
+              disabled
+              title="Cache management feature coming soon"
             >
               <RefreshCw className="w-5 h-5" />
               <span className="text-xs">Clear Cache</span>
@@ -251,7 +254,8 @@ export default function SuperAdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "System Logs", description: "Opening detailed system logs..." })}
+              disabled
+              title="System logs feature coming soon"
             >
               <Activity className="w-5 h-5" />
               <span className="text-xs">View Logs</span>

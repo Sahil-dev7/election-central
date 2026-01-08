@@ -67,6 +67,17 @@ export default function Dashboard() {
   const handleVoteConfirm = async () => {
     if (!selectedCandidate || !activeElection) return;
     
+    // CRITICAL: Prevent double voting
+    if (userVote && userVote.electionId === activeElection.id) {
+      toast({
+        title: "Already Voted",
+        description: "आप इस चुनाव में पहले ही मतदान कर चुके हैं। You have already voted in this election!",
+        variant: "destructive",
+      });
+      setShowConfirmation(false);
+      return;
+    }
+    
     setIsSubmitting(true);
     
     // Step animation
@@ -75,20 +86,30 @@ export default function Dashboard() {
     setVotingStep(3);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
-    // Cast the vote
-    castVote(activeElection.id, selectedCandidate);
+    // Cast the vote and check if successful
+    const voteSuccess = castVote(activeElection.id, selectedCandidate);
     
     setIsSubmitting(false);
-    setShowConfirmation(false);
-    setShowSuccess(true);
-    setHasVoted(true);
+    
+    if (voteSuccess) {
+      setShowConfirmation(false);
+      setShowSuccess(true);
+      setHasVoted(true);
+    } else {
+      toast({
+        title: "Vote Failed",
+        description: "आप इस चुनाव में पहले ही मतदान कर चुके हैं। You have already voted in this election!",
+        variant: "destructive",
+      });
+      setShowConfirmation(false);
+    }
   };
 
   const handleSuccessClose = () => {
     setShowSuccess(false);
     toast({
       title: "Vote recorded successfully! ✓",
-      description: `Thank you for voting for ${selectedCandidateData?.name}. Your voice matters!`,
+      description: `Thank you for voting for ${selectedCandidateData?.name}. Your voice matters! आपके वोट के लिए धन्यवाद।`,
     });
   };
 

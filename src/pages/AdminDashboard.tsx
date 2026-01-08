@@ -233,7 +233,8 @@ export default function AdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Bulk Import", description: "Opening voter import wizard..." })}
+              disabled
+              title="Import voters functionality coming soon"
             >
               <Users className="w-5 h-5" />
               <span className="text-xs">Import Voters</span>
@@ -241,7 +242,8 @@ export default function AdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Generate Report", description: "Preparing election report..." })}
+              disabled
+              title="Report generation coming soon"
             >
               <Download className="w-5 h-5" />
               <span className="text-xs">Generate Report</span>
@@ -249,7 +251,8 @@ export default function AdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Send Notification", description: "Opening notification composer..." })}
+              disabled
+              title="Notifications coming soon"
             >
               <AlertCircle className="w-5 h-5" />
               <span className="text-xs">Send Alert</span>
@@ -257,7 +260,8 @@ export default function AdminDashboard() {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Backup Data", description: "Creating secure backup..." })}
+              disabled
+              title="Backup functionality coming soon"
             >
               <Lock className="w-5 h-5" />
               <span className="text-xs">Backup Data</span>

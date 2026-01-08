@@ -28,19 +28,22 @@ export function VoteSuccessAnimation({
 
   useEffect(() => {
     if (isVisible) {
-      // Generate confetti pieces
+      // Generate confetti pieces - centered from middle of screen
       const colors = ["#FF9933", "#138808", "#3b82f6", "#eab308", "#22c55e", "#f97316"];
       const pieces: ConfettiPiece[] = [];
       
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 60; i++) {
+        // Spread confetti more evenly and keep it centered
+        const angle = (i / 60) * Math.PI * 2;
+        const velocity = 150 + Math.random() * 150;
         pieces.push({
           id: i,
-          x: (Math.random() - 0.5) * 600,
-          y: (Math.random() - 0.5) * 600,
+          x: Math.cos(angle) * velocity,
+          y: Math.sin(angle) * velocity - 100, // Upward bias
           rotation: Math.random() * 720 - 360,
           color: colors[Math.floor(Math.random() * colors.length)],
           size: Math.random() * 8 + 4,
-          delay: Math.random() * 0.5,
+          delay: (i / 60) * 0.1,
         });
       }
       setConfetti(pieces);
@@ -54,7 +57,8 @@ export function VoteSuccessAnimation({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-election-navy/95 backdrop-blur-md"
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
         >
           {/* Confetti pieces */}
           {confetti.map((piece) => (
@@ -64,107 +68,145 @@ export function VoteSuccessAnimation({
                 opacity: 1,
                 x: 0,
                 y: 0,
-                scale: 0,
+                scale: 0.8,
                 rotate: 0,
               }}
               animate={{
-                opacity: [1, 1, 0],
+                opacity: [1, 1, 0.5, 0],
                 x: piece.x,
-                y: piece.y,
-                scale: [0, 1.2, 0.8],
+                y: piece.y + Math.random() * 200, // Add gravity
+                scale: [0.8, 1.2, 1],
                 rotate: piece.rotation,
               }}
               transition={{
-                duration: 2.5,
+                duration: 3,
                 delay: piece.delay,
                 ease: "easeOut",
               }}
-              className="absolute rounded-sm"
+              className="absolute pointer-events-none"
               style={{
-                backgroundColor: piece.color,
-                width: piece.size,
-                height: piece.size,
+                left: "50%",
+                top: "50%",
+                marginLeft: -piece.size / 2,
+                marginTop: -piece.size / 2,
               }}
-            />
+            >
+              <div
+                className="rounded-sm"
+                style={{
+                  backgroundColor: piece.color,
+                  width: piece.size,
+                  height: piece.size,
+                  boxShadow: `0 0 ${piece.size}px ${piece.color}80`,
+                }}
+              />
+            </motion.div>
           ))}
 
-          {/* Burst rings */}
+          {/* Burst rings - subtle */}
           {[1, 2, 3].map((ring) => (
             <motion.div
-              key={ring}
-              initial={{ scale: 0, opacity: 0.8 }}
-              animate={{ scale: 4, opacity: 0 }}
+              key={`ring-${ring}`}
+              initial={{ scale: 0, opacity: 0.6 }}
+              animate={{ scale: 3.5, opacity: 0 }}
               transition={{
-                duration: 1.5,
-                delay: ring * 0.2,
+                duration: 1.2,
+                delay: ring * 0.15,
                 ease: "easeOut",
               }}
-              className="absolute w-20 h-20 rounded-full border-4 border-election-gold"
+              className="absolute rounded-full border-2 border-election-gold"
+              style={{
+                width: 40,
+                height: 40,
+                left: "50%",
+                top: "50%",
+                marginLeft: -20,
+                marginTop: -20,
+              }}
             />
           ))}
 
+          {/* Main content card - centered */}
           <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.5, opacity: 0 }}
-            transition={{ type: "spring", duration: 0.6 }}
-            className="relative text-center z-10"
+            initial={{ scale: 0.5, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.5, opacity: 0, y: -20 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="relative z-10 bg-background border-2 border-election-gold rounded-2xl p-8 max-w-md w-full shadow-2xl"
           >
-            {/* Success icon with glow */}
+            {/* Glow effect behind card */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-election-gold/20 via-election-gold/10 to-election-gold/20 rounded-2xl blur-xl -z-10" />
+
+            {/* Success icon */}
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="relative mx-auto mb-6"
+              className="flex justify-center mb-6"
             >
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute inset-0 w-24 h-24 rounded-full bg-election-gold/30 blur-xl"
-              />
-              
-              <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-election-gold to-amber-500 flex items-center justify-center shadow-2xl glow-gold">
+              <div className="relative">
+                <div className="w-20 h-20 bg-election-gold/20 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-12 h-12 text-election-gold" />
+                </div>
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.4, type: "spring" }}
-                >
-                  <CheckCircle2 className="w-12 h-12 text-white" strokeWidth={3} />
-                </motion.div>
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute inset-0 rounded-full border-2 border-election-gold"
+                />
               </div>
             </motion.div>
 
             {/* Text content */}
+            <h2 className="text-2xl font-bold text-center text-foreground mb-2">
+              आपका वोट दर्ज हो गया!
+            </h2>
+            <p className="text-center text-lg font-semibold text-election-gold mb-4">
+              Your Vote Matters
+            </p>
+
+            <p className="text-center text-muted-foreground mb-2">
+              धन्यवाद <span className="text-foreground font-semibold">{candidateName}</span> को वोट देने के लिए
+            </p>
+            <p className="text-center text-sm text-muted-foreground mb-6">
+              Thank you for voting! Your voice has been recorded.
+            </p>
+
+            {/* Decorative sparkles */}
+            <div className="flex justify-center gap-2 mb-6">
+              {[1, 2, 3].map((i) => (
+                <motion.div
+                  key={`sparkle-${i}`}
+                  animate={{ scale: [0, 1, 0], opacity: [0, 1, 0] }}
+                  transition={{
+                    duration: 1.5,
+                    delay: i * 0.2,
+                    repeat: Infinity,
+                    repeatDelay: 0.5,
+                  }}
+                >
+                  <Sparkles className="w-5 h-5 text-election-gold" />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Close button */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <PartyPopper className="w-5 h-5 text-election-gold" />
-                <span className="text-lg font-medium text-election-gold">Success!</span>
-                <Sparkles className="w-5 h-5 text-election-gold" />
-              </div>
-              
-              <h2 className="text-2xl font-bold text-white mb-2">
-                Your Vote Has Been Cast
-              </h2>
-              <p className="text-white/80 mb-2">
-                You voted for <span className="font-semibold text-election-gold">{candidateName}</span>
-              </p>
-              <p className="text-white/60 text-sm mb-6">
-                Your vote has been securely recorded.
-              </p>
-
               <Button
-                variant="glass"
-                size="lg"
                 onClick={onClose}
-                className="min-w-[180px]"
+                className="w-full bg-election-gold hover:bg-election-gold/90 text-foreground font-semibold py-6"
               >
-                View Results
+                आगे बढ़ें / Continue
               </Button>
             </motion.div>
+
+            {/* Small footer text */}
+            <p className="text-center text-xs text-muted-foreground mt-4">
+              You can download your vote receipt from the dashboard
+            </p>
           </motion.div>
         </motion.div>
       )}
