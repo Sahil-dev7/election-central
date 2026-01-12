@@ -1,73 +1,127 @@
-# Welcome to your Lovable project
+# Election Central 🗳️
 
-## Project info
+**Minor Project | Renaissance University**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+🔗 **Live Demo:** [https://sahil-dev7.github.io/election-central/](https://sahil-dev7.github.io/election-central/)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 📌 Project Overview
 
-**Use Lovable**
+Election Central ek **web-based minor project** hai jo elections se related information ko ek clean aur user-friendly interface me present karta hai. Is project ka main focus **frontend development, deployment, aur modern web tooling** ko practically samajhna tha.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Ye project Renaissance University ke **Minor Project** requirements ke under develop kiya gaya hai.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🎯 Objectives
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+* Modern frontend framework ka use karna (Vite-based setup)
+* Clean UI/UX design banana
+* Single Page Application (SPA) behavior ko samajhna
+* GitHub Pages par proper deployment karna
+* Real-world project workflow (build → deploy)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🛠️ Tech Stack
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+* **Frontend:** HTML, CSS, JavaScript
+* **Build Tool:** Vite
+* **Version Control:** Git & GitHub
+* **Deployment:** GitHub Pages (GitHub Actions CI/CD)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🚀 Features
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+* Responsive layout (mobile & desktop friendly)
+* Fast loading with Vite build
+* SPA routing support with 404 fallback
+* Clean and minimal UI
+* Deployed using automated GitHub Actions workflow
+
+---
+
+## 📂 Project Structure
+
+```
+election-central/
+│
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   └── main.js
+│
+├── dist/              # Production build (auto-generated)
+├── index.html
+├── vite.config.ts
+├── package.json
+└── .github/workflows/
+    └── deploy-pages.yml
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+Agar aap project ko locally run karna chahte ho:
+
+```bash
+# Repository clone karein
+git clone https://github.com/sahil-dev7/election-central.git
+
+# Project folder me jayein
+cd election-central
+
+# Dependencies install karein
+npm install
+
+# Development server start karein
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🌐 Deployment
 
-**Use GitHub Codespaces**
+Project **GitHub Pages** par deploy kiya gaya hai using **GitHub Actions**.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Deployment steps:
 
-## What technologies are used for this project?
+1. `npm run build`
+2. `dist/` folder generate hota hai
+3. `index.html` → `404.html` copy (SPA support ke liye)
+4. Auto-deploy via GitHub Actions
 
-This project is built with:
+Live URL:
+👉 [https://sahil-dev7.github.io/election-central/](https://sahil-dev7.github.io/election-central/)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🎓 Academic Context
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+* **University:** Renaissance University
+* **Project Type:** Minor Project
+* **Domain:** Web Development
+* **Purpose:** Academic + Practical Learning
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## 👨‍💻 Developer
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+**Sahil Wadhwani**
+Software Developer (Student)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+GitHub: [https://github.com/sahil-dev7](https://github.com/sahil-dev7)
+
+---
+
+## 📜 License
+
+This project is created for **educational purposes only**.
+
+---
+
+✨ *Learning by building — not by copying.*
