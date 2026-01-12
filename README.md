@@ -6,11 +6,9 @@
 
 ---
 
-## 📌 Project Overview
+**Election Central** is a lightning-fast, **React-powered Single Page Application (SPA)** built with modern frontend technologies. This project showcases **component-based architecture**, **blazing-fast performance**, and **production-grade deployment workflows** - perfect for academic demonstrations and portfolio showcase!
 
-Election Central ek **web-based minor project** hai jo elections se related information ko ek clean aur user-friendly interface me present karta hai. Is project ka main focus **frontend development, deployment, aur modern web tooling** ko practically samajhna tha.
-
-Ye project Renaissance University ke **Minor Project** requirements ke under develop kiya gaya hai.
+> *A clean, responsive election information platform that loads faster than you can say "Vote!"*
 
 ---
 
@@ -37,6 +35,7 @@ Ye project Renaissance University ke **Minor Project** requirements ke under dev
 
 * Responsive layout (mobile & desktop friendly)
 * Fast loading with Vite build
+* GitHub Actions CI/CD Pipeline
 * SPA routing support with 404 fallback
 * Clean and minimal UI
 * Deployed using automated GitHub Actions workflow
@@ -106,21 +105,6 @@ Live URL:
 * **Project Type:** Minor Project
 * **Domain:** Web Development
 * **Purpose:** Academic + Practical Learning
-
----
-
-## 👨‍💻 Developer
-
-**Sahil Wadhwani**
-Software Developer (Student)
-
-GitHub: [https://github.com/sahil-dev7](https://github.com/sahil-dev7)
-
----
-
-## 📜 License
-
-This project is created for **educational purposes only**.
 
 ---
 
