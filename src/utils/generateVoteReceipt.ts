@@ -14,127 +14,170 @@ export function generateVoteReceipt(data: VoteReceiptData): void {
   const doc = new jsPDF();
   
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
   
-  // Header - Government Style
-  doc.setFillColor(27, 38, 59); // Navy blue
-  doc.rect(0, 0, pageWidth, 45, "F");
+  // Header - Navy Blue Government Style
+  doc.setFillColor(27, 38, 59);
+  doc.rect(0, 0, pageWidth, 50, "F");
   
-  // Ashoka Chakra approximation (circle with lines)
-  doc.setDrawColor(255, 193, 7); // Gold
-  doc.setLineWidth(0.5);
-  doc.circle(pageWidth / 2, 20, 8);
-  doc.setFontSize(8);
-  doc.setTextColor(255, 193, 7);
+  // Ashoka Chakra Circle
+  doc.setDrawColor(255, 193, 7);
+  doc.setLineWidth(1);
+  doc.circle(pageWidth / 2, 22, 10);
+  
+  // Spokes of Ashoka Chakra
   for (let i = 0; i < 24; i++) {
     const angle = (i * 15 * Math.PI) / 180;
-    const x1 = pageWidth / 2 + 5 * Math.cos(angle);
-    const y1 = 20 + 5 * Math.sin(angle);
-    const x2 = pageWidth / 2 + 8 * Math.cos(angle);
-    const y2 = 20 + 8 * Math.sin(angle);
+    const x1 = pageWidth / 2 + 6 * Math.cos(angle);
+    const y1 = 22 + 6 * Math.sin(angle);
+    const x2 = pageWidth / 2 + 10 * Math.cos(angle);
+    const y2 = 22 + 10 * Math.sin(angle);
     doc.line(x1, y1, x2, y2);
   }
   
-  // Title
+  // Title - Hindi
   doc.setFontSize(14);
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.text("भारत निर्वाचन आयोग", pageWidth / 2, 35, { align: "center" });
+  doc.text("ELECTVOTE - VOTING RECEIPT", pageWidth / 2, 40, { align: "center" });
   doc.setFontSize(10);
-  doc.text("Election Commission of India", pageWidth / 2, 41, { align: "center" });
+  doc.text("Election Commission of India", pageWidth / 2, 47, { align: "center" });
+  
+  // Decorative line under header
+  doc.setDrawColor(255, 193, 7);
+  doc.setLineWidth(2);
+  doc.line(20, 55, pageWidth - 20, 55);
   
   // Receipt Title
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(27, 38, 59);
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("मतदान रसीद / Vote Receipt", pageWidth / 2, 60, { align: "center" });
+  doc.text("OFFICIAL VOTE CONFIRMATION", pageWidth / 2, 70, { align: "center" });
   
   // Success Badge
-  doc.setFillColor(34, 197, 94); // Green
-  doc.roundedRect(pageWidth / 2 - 30, 65, 60, 12, 3, 3, "F");
-  doc.setFontSize(10);
+  doc.setFillColor(34, 197, 94);
+  doc.roundedRect(pageWidth / 2 - 35, 76, 70, 14, 4, 4, "F");
+  doc.setFontSize(11);
   doc.setTextColor(255, 255, 255);
-  doc.text("✓ मतदान सफल / Vote Confirmed", pageWidth / 2, 73, { align: "center" });
+  doc.setFont("helvetica", "bold");
+  doc.text("VOTE SUCCESSFULLY RECORDED", pageWidth / 2, 85, { align: "center" });
   
-  // Transaction ID
+  // Transaction ID Box
+  doc.setFillColor(241, 245, 249);
+  doc.roundedRect(30, 98, pageWidth - 60, 16, 3, 3, "F");
   doc.setTextColor(100, 100, 100);
-  doc.setFontSize(9);
+  doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(`Transaction ID: ${data.transactionId}`, pageWidth / 2, 85, { align: "center" });
-  
-  // Divider
-  doc.setDrawColor(200, 200, 200);
-  doc.line(20, 92, pageWidth - 20, 92);
+  doc.text("Transaction ID:", 40, 108);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(27, 38, 59);
+  doc.text(data.transactionId, pageWidth - 40, 108, { align: "right" });
   
   // Details Section
-  let yPos = 105;
-  const leftCol = 25;
-  const rightCol = 90;
+  let yPos = 130;
+  const leftCol = 30;
+  const rightCol = 100;
   
-  const addRow = (label: string, value: string) => {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    doc.text(label, leftCol, yPos);
+  const addDetailRow = (label: string, value: string, isImportant: boolean = false) => {
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(0, 0, 0);
-    doc.text(value, rightCol, yPos);
-    yPos += 12;
+    doc.setFontSize(11);
+    doc.setTextColor(100, 100, 100);
+    doc.text(label, leftCol, yPos);
+    
+    doc.setFont("helvetica", isImportant ? "bold" : "normal");
+    doc.setTextColor(27, 38, 59);
+    
+    // Handle long text
+    const maxWidth = pageWidth - rightCol - 20;
+    const splitText = doc.splitTextToSize(value, maxWidth);
+    doc.text(splitText, rightCol, yPos);
+    
+    yPos += 14 + (splitText.length - 1) * 5;
   };
   
-  addRow("मतदाता / Voter:", data.voterName);
-  addRow("मतदाता ID / Voter ID:", data.voterId);
-  addRow("चुनाव / Election:", data.electionTitle);
-  addRow("उम्मीदवार / Candidate:", data.candidateName);
-  addRow("दल / Party:", data.candidateParty);
-  addRow("दिनांक / Date:", data.timestamp.toLocaleDateString("hi-IN", {
+  addDetailRow("Voter Name:", data.voterName, true);
+  addDetailRow("Voter ID:", data.voterId);
+  addDetailRow("Election:", data.electionTitle, true);
+  addDetailRow("Candidate Voted:", data.candidateName, true);
+  addDetailRow("Party:", data.candidateParty);
+  addDetailRow("Date:", data.timestamp.toLocaleDateString("en-IN", {
+    weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   }));
-  addRow("समय / Time:", data.timestamp.toLocaleTimeString("hi-IN", {
+  addDetailRow("Time:", data.timestamp.toLocaleTimeString("en-IN", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
+    hour12: true,
   }));
   
   // Divider
+  yPos += 5;
   doc.setDrawColor(200, 200, 200);
-  doc.line(20, yPos + 5, pageWidth - 20, yPos + 5);
+  doc.setLineWidth(0.5);
+  doc.line(30, yPos, pageWidth - 30, yPos);
   
   // Security Notice Box
-  yPos += 20;
-  doc.setFillColor(254, 243, 199); // Amber light
-  doc.roundedRect(20, yPos, pageWidth - 40, 35, 3, 3, "F");
-  doc.setDrawColor(245, 158, 11); // Amber
-  doc.setLineWidth(0.5);
-  doc.roundedRect(20, yPos, pageWidth - 40, 35, 3, 3, "S");
+  yPos += 15;
+  doc.setFillColor(254, 249, 195);
+  doc.roundedRect(25, yPos, pageWidth - 50, 45, 4, 4, "F");
+  doc.setDrawColor(234, 179, 8);
+  doc.setLineWidth(1);
+  doc.roundedRect(25, yPos, pageWidth - 50, 45, 4, 4, "S");
   
-  doc.setFontSize(9);
+  doc.setFontSize(10);
   doc.setTextColor(146, 64, 14);
   doc.setFont("helvetica", "bold");
-  doc.text("सुरक्षा नोट / Security Notice:", 25, yPos + 10);
+  doc.text("IMPORTANT NOTICE", 32, yPos + 12);
+  
   doc.setFont("helvetica", "normal");
-  doc.text("यह रसीद केवल आपके रिकॉर्ड के लिए है।", 25, yPos + 20);
-  doc.text("This receipt is for your records only.", 25, yPos + 28);
+  doc.setFontSize(9);
+  const noticeText = [
+    "1. This receipt confirms your vote has been securely recorded.",
+    "2. Keep this receipt for your personal records only.",
+    "3. Your vote is anonymous and cannot be traced back to you.",
+    "4. For any queries, contact your local election office.",
+  ];
+  noticeText.forEach((line, i) => {
+    doc.text(line, 32, yPos + 22 + i * 6);
+  });
   
   // Footer
-  yPos += 50;
-  doc.setFillColor(240, 240, 240);
-  doc.rect(0, yPos, pageWidth, 40, "F");
+  const footerY = pageHeight - 35;
+  doc.setFillColor(27, 38, 59);
+  doc.rect(0, footerY, pageWidth, 35, "F");
   
-  doc.setFontSize(8);
-  doc.setTextColor(100, 100, 100);
-  doc.text("भारत निर्वाचन आयोग | Election Commission of India", pageWidth / 2, yPos + 12, { align: "center" });
-  doc.text("निर्वाचन सदन, अशोक रोड, नई दिल्ली - 110001", pageWidth / 2, yPos + 20, { align: "center" });
-  doc.text("www.eci.gov.in | 1950", pageWidth / 2, yPos + 28, { align: "center" });
-  
-  // Watermark
-  doc.setTextColor(230, 230, 230);
-  doc.setFontSize(60);
+  doc.setFontSize(9);
+  doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.text("ELECTVOTE", pageWidth / 2, 150, { align: "center", angle: 45 });
+  doc.text("ElectVote - Secure Digital Voting Platform", pageWidth / 2, footerY + 10, { align: "center" });
+  
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.text("Election Commission of India", pageWidth / 2, footerY + 18, { align: "center" });
+  doc.text("Nirvachan Sadan, Ashoka Road, New Delhi - 110001", pageWidth / 2, footerY + 25, { align: "center" });
+  doc.text("www.eci.gov.in | Helpline: 1950", pageWidth / 2, footerY + 32, { align: "center" });
+  
+  // Watermark (light)
+  doc.setTextColor(240, 240, 240);
+  doc.setFontSize(50);
+  doc.setFont("helvetica", "bold");
+  doc.text("ELECTVOTE", pageWidth / 2, pageHeight / 2, { align: "center", angle: 45 });
+  
+  // QR Code placeholder - just a box with text
+  doc.setFillColor(255, 255, 255);
+  doc.rect(pageWidth - 50, 98, 30, 30, "F");
+  doc.setDrawColor(27, 38, 59);
+  doc.setLineWidth(0.5);
+  doc.rect(pageWidth - 50, 98, 30, 30, "S");
+  doc.setFontSize(6);
+  doc.setTextColor(100, 100, 100);
+  doc.text("SCAN TO", pageWidth - 35, 110, { align: "center" });
+  doc.text("VERIFY", pageWidth - 35, 115, { align: "center" });
   
   // Save PDF
-  const fileName = `vote-receipt-${data.transactionId}.pdf`;
+  const fileName = `ElectVote-Receipt-${data.transactionId}.pdf`;
   doc.save(fileName);
 }

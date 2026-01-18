@@ -14,7 +14,7 @@ import {
   Info,
   RefreshCw,
   Download,
-  FileText
+  AlertTriangle
 } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatsCard } from "@/components/StatsCard";
@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useElectionData, getTimeGreeting } from "@/hooks/useElectionData";
+import { useVotingPersistence } from "@/hooks/useVotingPersistence";
 import { generateVoteReceipt } from "@/utils/generateVoteReceipt";
 
 export default function Dashboard() {
@@ -35,26 +36,39 @@ export default function Dashboard() {
     candidates,
     elections,
     voteHistory,
-    userVote,
     castVote,
     getTotalVotes,
     getVoterTurnout,
     isLiveUpdating,
-    setIsLiveUpdating,
   } = useElectionData();
+  
+  // Persistent voting state
+  const { hasVotedInElection, recordVote, getVoteRecord, getAllVotes } = useVotingPersistence();
 
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasVoted, setHasVoted] = useState(false);
   const [votingStep, setVotingStep] = useState(1);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [lastVoteRecord, setLastVoteRecord] = useState<{
+    candidateName: string;
+    transactionId: string;
+  } | null>(null);
 
   const totalVotes = getTotalVotes();
   const selectedCandidateData = candidates.find((c) => c.id === selectedCandidate);
   const activeElection = elections.find(e => e.status === "active");
   const voterTurnout = activeElection ? getVoterTurnout(activeElection.id) : 0;
+  
+  // Check if user has already voted in the active election
+  const hasAlreadyVoted = activeElection ? hasVotedInElection(activeElection.id) : false;
+  const existingVoteRecord = activeElection ? getVoteRecord(activeElection.id) : null;
+
+  // Get the candidate name for existing vote
+  const existingVotedCandidate = existingVoteRecord 
+    ? candidates.find(c => c.id === existingVoteRecord.candidateId)?.name || existingVoteRecord.candidateName
+    : null;
 
   // Track real-time updates
   useEffect(() => {
@@ -65,7 +79,18 @@ export default function Dashboard() {
   }, [isLiveUpdating]);
 
   const handleVoteConfirm = async () => {
-    if (!selectedCandidate || !activeElection) return;
+    if (!selectedCandidate || !activeElection || !selectedCandidateData) return;
+    
+    // Double-check: prevent voting if already voted
+    if (hasVotedInElection(activeElection.id)) {
+      toast({
+        title: "Already Voted",
+        description: "You have already cast your vote in this election. Each voter can only vote once.",
+        variant: "destructive",
+      });
+      setShowConfirmation(false);
+      return;
+    }
     
     setIsSubmitting(true);
     
@@ -75,39 +100,64 @@ export default function Dashboard() {
     setVotingStep(3);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
-    // Cast the vote
+    // Record the vote permanently in localStorage
+    const voteRecord = recordVote(activeElection.id, selectedCandidate, selectedCandidateData.name);
+    
+    // Cast the vote in the data hook
     castVote(activeElection.id, selectedCandidate);
+    
+    // Store for receipt download
+    setLastVoteRecord({
+      candidateName: selectedCandidateData.name,
+      transactionId: voteRecord.transactionId,
+    });
     
     setIsSubmitting(false);
     setShowConfirmation(false);
     setShowSuccess(true);
-    setHasVoted(true);
   };
 
   const handleSuccessClose = () => {
     setShowSuccess(false);
-    toast({
-      title: "Vote recorded successfully! ✓",
-      description: `Thank you for voting for ${selectedCandidateData?.name}. Your voice matters!`,
-    });
+    if (lastVoteRecord) {
+      toast({
+        title: "Vote recorded successfully! ✓",
+        description: `Thank you for voting for ${lastVoteRecord.candidateName}. Your voice matters!`,
+      });
+    }
   };
 
   const handleDownloadReceipt = () => {
-    if (!selectedCandidateData || !activeElection) return;
+    const candidateForReceipt = lastVoteRecord?.candidateName 
+      ? candidates.find(c => c.name === lastVoteRecord.candidateName)
+      : existingVoteRecord 
+        ? candidates.find(c => c.id === existingVoteRecord.candidateId)
+        : null;
+    
+    const transactionId = lastVoteRecord?.transactionId || existingVoteRecord?.transactionId;
+    
+    if (!candidateForReceipt || !activeElection || !transactionId) {
+      toast({
+        title: "Error",
+        description: "Unable to generate receipt. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     generateVoteReceipt({
       voterName: displayName,
-      voterId: `VID${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
+      voterId: `VID-${user?.id || Math.random().toString(36).substr(2, 8).toUpperCase()}`,
       electionTitle: activeElection.title,
-      candidateName: selectedCandidateData.name,
-      candidateParty: selectedCandidateData.party,
-      timestamp: new Date(),
-      transactionId: `VT-2025-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+      candidateName: candidateForReceipt.name,
+      candidateParty: candidateForReceipt.party,
+      timestamp: new Date(existingVoteRecord?.timestamp || new Date()),
+      transactionId: transactionId,
     });
     
     toast({
-      title: "रसीद डाउनलोड हो गई",
-      description: "आपकी मतदान रसीद PDF के रूप में डाउनलोड हो गई है।",
+      title: "Receipt Downloaded",
+      description: "Your voting receipt has been downloaded as a PDF.",
     });
   };
 
@@ -121,8 +171,8 @@ export default function Dashboard() {
 
   const handleElectionInfo = () => {
     toast({
-      title: "2024 Municipal Elections",
-      description: "Voting ends Dec 22, 2024. Select your preferred candidate and confirm your vote.",
+      title: activeElection?.title || "Election Info",
+      description: `Voting period: ${activeElection?.startDate} - ${activeElection?.endDate}`,
     });
   };
 
@@ -134,8 +184,8 @@ export default function Dashboard() {
     });
   };
 
-  // Show user's name if logged in, otherwise "User"
   const displayName = user?.name || "User";
+  const previousVotes = getAllVotes();
 
   return (
     <DashboardLayout userRole="voter" userName={displayName}>
@@ -153,12 +203,12 @@ export default function Dashboard() {
               स्वागत है! ElectVote में आपका स्वागत है 🗳️
             </h1>
             <p className="text-white/80 mb-4">
-              {hasVoted || userVote
+              {hasAlreadyVoted
                 ? "मतदान के लिए धन्यवाद! नीचे लाइव परिणाम देखें। Thank you for voting!"
                 : `आपके पास ${elections.filter(e => e.status === "active").length} सक्रिय चुनाव उपलब्ध है। आपका वोट मायने रखता है!`}
             </p>
             <div className="flex items-center gap-4">
-              {!hasVoted && !userVote && (
+              {!hasAlreadyVoted && (
                 <Button 
                   variant="vote" 
                   size="lg" 
@@ -187,8 +237,8 @@ export default function Dashboard() {
           />
           <StatsCard
             title="Your Votes Cast"
-            value={voteHistory.length + (hasVoted ? 1 : 0)}
-            subtitle="This year"
+            value={previousVotes.length}
+            subtitle="Total votes in system"
             icon={CheckCircle2}
             variant="success"
           />
@@ -231,9 +281,9 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-bold text-foreground">Cast Your Vote</h2>
-              <p className="text-sm text-muted-foreground">2024 Municipal Elections - Select your candidate</p>
+              <p className="text-sm text-muted-foreground">{activeElection?.title || "Select your candidate"}</p>
             </div>
-            {(hasVoted || userVote) && (
+            {hasAlreadyVoted && (
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 border border-success/20">
                 <CheckCircle2 className="w-4 h-4 text-success" />
                 <span className="text-sm font-medium text-success">Vote Submitted</span>
@@ -241,7 +291,7 @@ export default function Dashboard() {
             )}
           </div>
 
-          {!hasVoted && !userVote ? (
+          {!hasAlreadyVoted ? (
             <>
               {/* Voting steps indicator */}
               <div className="glass-card p-4 mb-6">
@@ -317,9 +367,13 @@ export default function Dashboard() {
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">मतदान के लिए धन्यवाद!</h3>
-              <p className="text-muted-foreground mb-4">
-                आपने <span className="font-semibold text-foreground">{selectedCandidateData?.name || userVote?.candidateId}</span> को वोट दिया
+              <p className="text-muted-foreground mb-2">
+                आपने <span className="font-semibold text-foreground">{existingVotedCandidate}</span> को वोट दिया
               </p>
+              <div className="flex items-center justify-center gap-2 mb-4 text-sm text-muted-foreground">
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+                <span>आप इस चुनाव में दोबारा मतदान नहीं कर सकते</span>
+              </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button variant="default" onClick={handleDownloadReceipt}>
                   <Download className="w-4 h-4 mr-2" />
@@ -424,52 +478,58 @@ export default function Dashboard() {
           </div>
 
           <div className="glass-card divide-y divide-border">
-            {voteHistory.map((vote, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="p-4 flex items-center justify-between"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5 text-success" />
+            {previousVotes.length > 0 ? (
+              previousVotes.map((vote, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-4 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-success" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">{vote.candidateName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(vote.timestamp).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-foreground">{vote.election}</p>
-                    <p className="text-sm text-muted-foreground">Voted for {vote.candidate}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-foreground">{vote.date}</p>
-                  <span className="text-xs text-success">Verified ✓</span>
-                </div>
-              </motion.div>
-            ))}
+                  <span className="px-3 py-1 rounded-full bg-success/10 text-success text-xs font-medium">
+                    Completed
+                  </span>
+                </motion.div>
+              ))
+            ) : (
+              <div className="p-8 text-center text-muted-foreground">
+                <History className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No voting history yet</p>
+                <p className="text-sm">Your votes will appear here after you cast them</p>
+              </div>
+            )}
           </div>
         </section>
       </div>
 
       {/* Modals */}
-      {selectedCandidateData && (
-        <>
-          <VoteConfirmationModal
-            isOpen={showConfirmation}
-            onClose={() => setShowConfirmation(false)}
-            onConfirm={handleVoteConfirm}
-            candidateName={selectedCandidateData.name}
-            candidateParty={selectedCandidateData.party}
-            candidatePhoto={selectedCandidateData.photo}
-            isSubmitting={isSubmitting}
-          />
-          <VoteSuccessAnimation
-            isVisible={showSuccess}
-            candidateName={selectedCandidateData.name}
-            onClose={handleSuccessClose}
-          />
-        </>
-      )}
+      <VoteConfirmationModal
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        onConfirm={handleVoteConfirm}
+        candidateName={selectedCandidateData?.name || ""}
+        candidateParty={selectedCandidateData?.party || ""}
+        candidatePhoto={selectedCandidateData?.photo || ""}
+        isSubmitting={isSubmitting}
+      />
+
+      <VoteSuccessAnimation
+        isVisible={showSuccess}
+        candidateName={lastVoteRecord?.candidateName || selectedCandidateData?.name || ""}
+        onClose={handleSuccessClose}
+      />
     </DashboardLayout>
   );
 }
