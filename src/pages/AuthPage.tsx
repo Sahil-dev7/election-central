@@ -312,12 +312,11 @@ export default function AuthPage() {
             <div className="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center mb-8 mx-auto">
               <Vote className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-white mb-4 text-center">
               Your Vote Matters
             </h2>
-            <p className="text-white/80 max-w-sm">
-              Join millions of voters who trust ElectVote for secure, 
-              transparent, and accessible elections.
+            <p className="text-white/80 max-w-sm text-center leading-relaxed">
+              Join millions of voters who trust ElectVote for secure, transparent, and accessible elections.
             </p>
 
             {/* Feature list */}

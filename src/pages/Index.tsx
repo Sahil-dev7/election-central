@@ -19,26 +19,7 @@ import { NewsSection } from "@/components/NewsSection";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
-  
-  const toggleTheme = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    document.documentElement.classList.toggle('dark', newIsDark);
-  };
-  
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={toggleTheme}
-      className="h-9 w-9 rounded-full bg-secondary/50 hover:bg-secondary"
-    >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </Button>
-  );
-}
+import { GlobalThemeToggle } from "@/components/GlobalThemeToggle";
 
 export default function Index() {
   const { language, t } = useLanguage();
@@ -110,7 +91,7 @@ export default function Index() {
             {/* Right Side Controls */}
             <div className="flex items-center gap-2">
               <LanguageToggle />
-              <ThemeToggle />
+              <GlobalThemeToggle />
               
               <div className="hidden sm:flex items-center gap-2 ml-2">
                 <Link to="/auth">
