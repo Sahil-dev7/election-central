@@ -17,6 +17,7 @@ interface ConfettiPiece {
   color: string;
   size: number;
   delay: number;
+  shape: "square" | "circle" | "triangle";
 }
 
 export function VoteSuccessAnimation({
@@ -28,19 +29,24 @@ export function VoteSuccessAnimation({
 
   useEffect(() => {
     if (isVisible) {
-      // Generate confetti pieces
-      const colors = ["#FF9933", "#138808", "#3b82f6", "#eab308", "#22c55e", "#f97316"];
+      // Generate confetti pieces with varied shapes
+      const colors = ["#FF9933", "#138808", "#3b82f6", "#eab308", "#22c55e", "#f97316", "#ec4899", "#8b5cf6"];
+      const shapes: ("square" | "circle" | "triangle")[] = ["square", "circle", "triangle"];
       const pieces: ConfettiPiece[] = [];
       
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 80; i++) {
+        // Distribute confetti more evenly from center
+        const angle = (Math.PI * 2 * i) / 80;
+        const distance = 200 + Math.random() * 300;
         pieces.push({
           id: i,
-          x: (Math.random() - 0.5) * 600,
-          y: (Math.random() - 0.5) * 600,
-          rotation: Math.random() * 720 - 360,
+          x: Math.cos(angle) * distance,
+          y: Math.sin(angle) * distance - 100, // Bias upward slightly
+          rotation: Math.random() * 1080 - 540,
           color: colors[Math.floor(Math.random() * colors.length)],
-          size: Math.random() * 8 + 4,
-          delay: Math.random() * 0.5,
+          size: Math.random() * 10 + 6,
+          delay: Math.random() * 0.3,
+          shape: shapes[Math.floor(Math.random() * shapes.length)],
         });
       }
       setConfetti(pieces);
@@ -56,37 +62,43 @@ export function VoteSuccessAnimation({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-election-navy/95 backdrop-blur-md"
         >
-          {/* Confetti pieces */}
-          {confetti.map((piece) => (
-            <motion.div
-              key={piece.id}
-              initial={{
-                opacity: 1,
-                x: 0,
-                y: 0,
-                scale: 0,
-                rotate: 0,
-              }}
-              animate={{
-                opacity: [1, 1, 0],
-                x: piece.x,
-                y: piece.y,
-                scale: [0, 1.2, 0.8],
-                rotate: piece.rotation,
-              }}
-              transition={{
-                duration: 2.5,
-                delay: piece.delay,
-                ease: "easeOut",
-              }}
-              className="absolute rounded-sm"
-              style={{
-                backgroundColor: piece.color,
-                width: piece.size,
-                height: piece.size,
-              }}
-            />
-          ))}
+          {/* Confetti pieces - centered properly */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+            {confetti.map((piece) => (
+              <motion.div
+                key={piece.id}
+                initial={{
+                  opacity: 1,
+                  x: 0,
+                  y: 0,
+                  scale: 0,
+                  rotate: 0,
+                }}
+                animate={{
+                  opacity: [1, 1, 0.8, 0],
+                  x: piece.x,
+                  y: piece.y,
+                  scale: [0, 1.5, 1],
+                  rotate: piece.rotation,
+                }}
+                transition={{
+                  duration: 3,
+                  delay: piece.delay,
+                  ease: [0.23, 1, 0.32, 1],
+                }}
+                className="absolute"
+                style={{
+                  backgroundColor: piece.shape !== "triangle" ? piece.color : "transparent",
+                  width: piece.size,
+                  height: piece.size,
+                  borderRadius: piece.shape === "circle" ? "50%" : piece.shape === "square" ? "2px" : 0,
+                  borderLeft: piece.shape === "triangle" ? `${piece.size / 2}px solid transparent` : undefined,
+                  borderRight: piece.shape === "triangle" ? `${piece.size / 2}px solid transparent` : undefined,
+                  borderBottom: piece.shape === "triangle" ? `${piece.size}px solid ${piece.color}` : undefined,
+                }}
+              />
+            ))}
+          </div>
 
           {/* Burst rings */}
           {[1, 2, 3].map((ring) => (

@@ -22,6 +22,7 @@ interface NewsItem {
   dateHi: string;
 }
 
+// Hero carousel images integrated into news
 const demoNews: NewsItem[] = [
   {
     id: 1,
@@ -37,6 +38,18 @@ const demoNews: NewsItem[] = [
   },
   {
     id: 2,
+    titleEn: "PM Modi at India-Italy Bilateral Summit",
+    titleHi: "प्रधानमंत्री मोदी भारत-इटली द्विपक्षीय शिखर सम्मेलन में",
+    summaryEn: "Prime Minister Narendra Modi meets Italian counterpart Giorgia Meloni for strengthening bilateral ties and trade relations.",
+    summaryHi: "प्रधानमंत्री नरेंद्र मोदी ने द्विपक्षीय संबंधों और व्यापार संबंधों को मजबूत करने के लिए इतालवी समकक्ष जॉर्जिया मेलोनी से मुलाकात की।",
+    image: "https://cdn.siasat.com/wp-content/uploads/2024/06/PM-modi-and-Italian-counterpart-Giorgia-Meloni--660x495.jpg",
+    categoryEn: "International",
+    categoryHi: "अंतर्राष्ट्रीय",
+    dateEn: "3 hours ago",
+    dateHi: "3 घंटे पहले",
+  },
+  {
+    id: 3,
     titleEn: "Lok Sabha Elections 2025: EC Announces Schedule",
     titleHi: "लोकसभा चुनाव 2025: निर्वाचन आयोग ने तारीखों की घोषणा की",
     summaryEn: "Election Commission releases schedule for upcoming Lok Sabha elections. Voting to be held in 7 phases across all states.",
@@ -48,7 +61,19 @@ const demoNews: NewsItem[] = [
     dateHi: "5 घंटे पहले",
   },
   {
-    id: 3,
+    id: 4,
+    titleEn: "Youth in Politics: Swapnil Kothari's Journey",
+    titleHi: "राजनीति में युवा: स्वप्निल कोठारी की यात्रा",
+    summaryEn: "Young political leader Swapnil Kothari from Congress shares his vision for youth empowerment and digital democracy.",
+    summaryHi: "कांग्रेस के युवा राजनीतिक नेता स्वप्निल कोठारी ने युवा सशक्तिकरण और डिजिटल लोकतंत्र के लिए अपना दृष्टिकोण साझा किया।",
+    image: "https://images.bhaskarassets.com/thumb/1200x900/web2images/521/2022/09/07/renaissance-730x548-1_1662533070.jpg",
+    categoryEn: "Youth",
+    categoryHi: "युवा",
+    dateEn: "1 day ago",
+    dateHi: "1 दिन पहले",
+  },
+  {
+    id: 5,
     titleEn: "40% Increase in Online Voter Registration",
     titleHi: "ऑनलाइन मतदाता पंजीकरण में 40% वृद्धि",
     summaryEn: "Record increase in online voter registration under Digital India initiative. Significant rise in young voters.",
@@ -60,7 +85,7 @@ const demoNews: NewsItem[] = [
     dateHi: "1 दिन पहले",
   },
   {
-    id: 4,
+    id: 6,
     titleEn: "EVM Security Enhanced with New Technology",
     titleHi: "नई तकनीक से EVM सुरक्षा में वृद्धि",
     summaryEn: "Election Commission introduces advanced security features in Electronic Voting Machines to ensure tamper-proof elections.",
@@ -72,7 +97,7 @@ const demoNews: NewsItem[] = [
     dateHi: "2 दिन पहले",
   },
   {
-    id: 5,
+    id: 7,
     titleEn: "Youth Voter Turnout Hits Record High",
     titleHi: "युवा मतदाता मतदान रिकॉर्ड ऊंचाई पर",
     summaryEn: "First-time voters show unprecedented enthusiasm with 78% participation rate in recent state elections.",
@@ -132,9 +157,9 @@ export function NewsSection() {
             </p>
           </motion.div>
 
-          {/* News Grid */}
-          <div className="grid md:grid-cols-3 gap-5">
-            {demoNews.slice(0, 3).map((news, index) => (
+          {/* News Grid - Show first 4 news */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {demoNews.slice(0, 4).map((news, index) => (
               <motion.div
                 key={news.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -189,9 +214,9 @@ export function NewsSection() {
             ))}
           </div>
 
-          {/* More News Row */}
-          <div className="mt-6 grid md:grid-cols-2 gap-5">
-            {demoNews.slice(3).map((news, index) => (
+          {/* More News Row - Show remaining news */}
+          <div className="mt-6 grid md:grid-cols-3 gap-5">
+            {demoNews.slice(4).map((news, index) => (
               <motion.div
                 key={news.id}
                 initial={{ opacity: 0, y: 20 }}
