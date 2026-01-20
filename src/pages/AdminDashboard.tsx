@@ -11,7 +11,6 @@ import {
   Search,
   Filter,
   MoreVertical,
-  Pause,
   Lock,
   Eye,
   Edit,
@@ -22,11 +21,12 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  Play,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatsCard } from "@/components/StatsCard";
 import { ElectionCard } from "@/components/ElectionCard";
+import { AdminQuickActions } from "@/components/AdminQuickActions";
+import { CandidateViewEditModal } from "@/components/CandidateViewEditModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -83,6 +83,9 @@ export default function AdminDashboard() {
   const [showEmergencyStop, setShowEmergencyStop] = useState(false);
   const [newElection, setNewElection] = useState({ title: "", titleHi: "", description: "", descriptionHi: "", startDate: "", endDate: "" });
   const [newCandidate, setNewCandidate] = useState({ name: "", nameHi: "", party: "", partyHi: "", manifesto: "", manifestoHi: "", constituency: "", constituencyHi: "" });
+  const [selectedCandidate, setSelectedCandidate] = useState<typeof candidates[0] | null>(null);
+  const [candidateModalMode, setCandidateModalMode] = useState<"view" | "edit">("view");
+  const [showCandidateModal, setShowCandidateModal] = useState(false);
 
   const totalVotes = getTotalVotes();
   const activeElections = elections.filter(e => e.status === "active").length;
@@ -159,12 +162,40 @@ export default function AdminDashboard() {
     toast({ title: "Voter Suspended", description: `${name} has been suspended.`, variant: "destructive" });
   };
 
-  const handleExportData = () => {
-    toast({ title: "Exporting Data", description: "Your data export will be ready shortly." });
+  const handleViewCandidate = (candidate: typeof candidates[0]) => {
+    setSelectedCandidate(candidate);
+    setCandidateModalMode("view");
+    setShowCandidateModal(true);
+  };
+
+  const handleEditCandidate = (candidate: typeof candidates[0]) => {
+    setSelectedCandidate(candidate);
+    setCandidateModalMode("edit");
+    setShowCandidateModal(true);
   };
 
   const handleRefresh = () => {
     toast({ title: "Data Refreshed", description: "Showing latest statistics." });
+  };
+
+  const handleExportData = () => {
+    // Create exportable data
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      elections: elections.map(e => ({ ...e })),
+      candidates: candidates.map(c => ({ name: c.name, party: c.party, votes: c.voteCount, status: c.status })),
+      voters: voters.map(v => ({ name: v.name, email: v.email, status: v.status })),
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `electvote-data-${new Date().toISOString().split("T")[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({ title: "Data Exported", description: "All election data has been downloaded." });
   };
 
   const filteredCandidates = candidates.filter(c => 
@@ -226,44 +257,8 @@ export default function AdminDashboard() {
         />
         </div>
 
-        {/* Quick Actions Section */}
-        <section className="glass-card-elevated p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Bulk Import", description: "Opening voter import wizard..." })}
-            >
-              <Users className="w-5 h-5" />
-              <span className="text-xs">Import Voters</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Generate Report", description: "Preparing election report..." })}
-            >
-              <Download className="w-5 h-5" />
-              <span className="text-xs">Generate Report</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Send Notification", description: "Opening notification composer..." })}
-            >
-              <AlertCircle className="w-5 h-5" />
-              <span className="text-xs">Send Alert</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => toast({ title: "Backup Data", description: "Creating secure backup..." })}
-            >
-              <Lock className="w-5 h-5" />
-              <span className="text-xs">Backup Data</span>
-            </Button>
-          </div>
-        </section>
+        {/* Quick Actions Section - Now with real functionality */}
+        <AdminQuickActions onDataChange={handleRefresh} />
 
         {/* Live Voting Stats */}
         <section className="glass-card-elevated p-6">
@@ -516,10 +511,10 @@ export default function AdminDashboard() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => toast({ title: candidate.name, description: candidate.manifesto })}>
+                            <DropdownMenuItem onClick={() => handleViewCandidate(candidate)}>
                               <Eye className="w-4 h-4 mr-2" /> View Profile
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast({ title: "Edit", description: "Opening candidate editor..." })}>
+                            <DropdownMenuItem onClick={() => handleEditCandidate(candidate)}>
                               <Edit className="w-4 h-4 mr-2" /> Edit
                             </DropdownMenuItem>
                             {candidate.status === "pending" && (
@@ -771,6 +766,18 @@ export default function AdminDashboard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Candidate View/Edit Modal */}
+      <CandidateViewEditModal
+        candidate={selectedCandidate}
+        isOpen={showCandidateModal}
+        onClose={() => setShowCandidateModal(false)}
+        mode={candidateModalMode}
+        onSave={(updatedCandidate) => {
+          // In a real app, this would update the candidate in the database
+          toast({ title: "Saved", description: `${updatedCandidate.name}'s profile updated.` });
+        }}
+      />
     </DashboardLayout>
   );
 }
