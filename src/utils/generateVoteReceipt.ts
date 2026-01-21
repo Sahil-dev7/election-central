@@ -1,5 +1,3 @@
-import jsPDF from "jspdf";
-
 interface VoteReceiptData {
   voterName: string;
   voterId: string;
@@ -10,174 +8,279 @@ interface VoteReceiptData {
   transactionId: string;
 }
 
+// Generate receipt as printable HTML instead of using vulnerable jspdf library
 export function generateVoteReceipt(data: VoteReceiptData): void {
-  const doc = new jsPDF();
-  
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  
-  // Header - Navy Blue Government Style
-  doc.setFillColor(27, 38, 59);
-  doc.rect(0, 0, pageWidth, 50, "F");
-  
-  // Ashoka Chakra Circle
-  doc.setDrawColor(255, 193, 7);
-  doc.setLineWidth(1);
-  doc.circle(pageWidth / 2, 22, 10);
-  
-  // Spokes of Ashoka Chakra
-  for (let i = 0; i < 24; i++) {
-    const angle = (i * 15 * Math.PI) / 180;
-    const x1 = pageWidth / 2 + 6 * Math.cos(angle);
-    const y1 = 22 + 6 * Math.sin(angle);
-    const x2 = pageWidth / 2 + 10 * Math.cos(angle);
-    const y2 = 22 + 10 * Math.sin(angle);
-    doc.line(x1, y1, x2, y2);
-  }
-  
-  // Title - Hindi
-  doc.setFontSize(14);
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.text("ELECTVOTE - VOTING RECEIPT", pageWidth / 2, 40, { align: "center" });
-  doc.setFontSize(10);
-  doc.text("Election Commission of India", pageWidth / 2, 47, { align: "center" });
-  
-  // Decorative line under header
-  doc.setDrawColor(255, 193, 7);
-  doc.setLineWidth(2);
-  doc.line(20, 55, pageWidth - 20, 55);
-  
-  // Receipt Title
-  doc.setTextColor(27, 38, 59);
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("OFFICIAL VOTE CONFIRMATION", pageWidth / 2, 70, { align: "center" });
-  
-  // Success Badge
-  doc.setFillColor(34, 197, 94);
-  doc.roundedRect(pageWidth / 2 - 35, 76, 70, 14, 4, 4, "F");
-  doc.setFontSize(11);
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.text("VOTE SUCCESSFULLY RECORDED", pageWidth / 2, 85, { align: "center" });
-  
-  // Transaction ID Box
-  doc.setFillColor(241, 245, 249);
-  doc.roundedRect(30, 98, pageWidth - 60, 16, 3, 3, "F");
-  doc.setTextColor(100, 100, 100);
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Transaction ID:", 40, 108);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(27, 38, 59);
-  doc.text(data.transactionId, pageWidth - 40, 108, { align: "right" });
-  
-  // Details Section
-  let yPos = 130;
-  const leftCol = 30;
-  const rightCol = 100;
-  
-  const addDetailRow = (label: string, value: string, isImportant: boolean = false) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-    doc.setTextColor(100, 100, 100);
-    doc.text(label, leftCol, yPos);
-    
-    doc.setFont("helvetica", isImportant ? "bold" : "normal");
-    doc.setTextColor(27, 38, 59);
-    
-    // Handle long text
-    const maxWidth = pageWidth - rightCol - 20;
-    const splitText = doc.splitTextToSize(value, maxWidth);
-    doc.text(splitText, rightCol, yPos);
-    
-    yPos += 14 + (splitText.length - 1) * 5;
-  };
-  
-  addDetailRow("Voter Name:", data.voterName, true);
-  addDetailRow("Voter ID:", data.voterId);
-  addDetailRow("Election:", data.electionTitle, true);
-  addDetailRow("Candidate Voted:", data.candidateName, true);
-  addDetailRow("Party:", data.candidateParty);
-  addDetailRow("Date:", data.timestamp.toLocaleDateString("en-IN", {
+  const dateStr = data.timestamp.toLocaleDateString("en-IN", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
-  }));
-  addDetailRow("Time:", data.timestamp.toLocaleTimeString("en-IN", {
+  });
+  
+  const timeStr = data.timestamp.toLocaleTimeString("en-IN", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
     hour12: true,
-  }));
-  
-  // Divider
-  yPos += 5;
-  doc.setDrawColor(200, 200, 200);
-  doc.setLineWidth(0.5);
-  doc.line(30, yPos, pageWidth - 30, yPos);
-  
-  // Security Notice Box
-  yPos += 15;
-  doc.setFillColor(254, 249, 195);
-  doc.roundedRect(25, yPos, pageWidth - 50, 45, 4, 4, "F");
-  doc.setDrawColor(234, 179, 8);
-  doc.setLineWidth(1);
-  doc.roundedRect(25, yPos, pageWidth - 50, 45, 4, 4, "S");
-  
-  doc.setFontSize(10);
-  doc.setTextColor(146, 64, 14);
-  doc.setFont("helvetica", "bold");
-  doc.text("IMPORTANT NOTICE", 32, yPos + 12);
-  
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  const noticeText = [
-    "1. This receipt confirms your vote has been securely recorded.",
-    "2. Keep this receipt for your personal records only.",
-    "3. Your vote is anonymous and cannot be traced back to you.",
-    "4. For any queries, contact your local election office.",
-  ];
-  noticeText.forEach((line, i) => {
-    doc.text(line, 32, yPos + 22 + i * 6);
   });
-  
-  // Footer
-  const footerY = pageHeight - 35;
-  doc.setFillColor(27, 38, 59);
-  doc.rect(0, footerY, pageWidth, 35, "F");
-  
-  doc.setFontSize(9);
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.text("ElectVote - Secure Digital Voting Platform", pageWidth / 2, footerY + 10, { align: "center" });
-  
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.text("Election Commission of India", pageWidth / 2, footerY + 18, { align: "center" });
-  doc.text("Nirvachan Sadan, Ashoka Road, New Delhi - 110001", pageWidth / 2, footerY + 25, { align: "center" });
-  doc.text("www.eci.gov.in | Helpline: 1950", pageWidth / 2, footerY + 32, { align: "center" });
-  
-  // Watermark (light)
-  doc.setTextColor(240, 240, 240);
-  doc.setFontSize(50);
-  doc.setFont("helvetica", "bold");
-  doc.text("ELECTVOTE", pageWidth / 2, pageHeight / 2, { align: "center", angle: 45 });
-  
-  // QR Code placeholder - just a box with text
-  doc.setFillColor(255, 255, 255);
-  doc.rect(pageWidth - 50, 98, 30, 30, "F");
-  doc.setDrawColor(27, 38, 59);
-  doc.setLineWidth(0.5);
-  doc.rect(pageWidth - 50, 98, 30, 30, "S");
-  doc.setFontSize(6);
-  doc.setTextColor(100, 100, 100);
-  doc.text("SCAN TO", pageWidth - 35, 110, { align: "center" });
-  doc.text("VERIFY", pageWidth - 35, 115, { align: "center" });
-  
-  // Save PDF
-  const fileName = `ElectVote-Receipt-${data.transactionId}.pdf`;
-  doc.save(fileName);
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vote Receipt - ${data.transactionId}</title>
+  <style>
+    @media print {
+      body { margin: 0; }
+      .no-print { display: none !important; }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    .receipt {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .header {
+      background: #1b263b;
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+    .chakra {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 12px;
+      border: 3px solid #ffc107;
+      border-radius: 50%;
+      position: relative;
+    }
+    .chakra::before {
+      content: '☸';
+      font-size: 36px;
+      color: #ffc107;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .header h1 {
+      font-size: 18px;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .divider {
+      height: 3px;
+      background: linear-gradient(90deg, #ff9933, white, #138808);
+    }
+    .content {
+      padding: 24px;
+    }
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .title h2 {
+      color: #1b263b;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .success-badge {
+      display: inline-block;
+      background: #22c55e;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .transaction-box {
+      background: #f1f5f9;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .transaction-box label {
+      color: #64748b;
+      font-size: 13px;
+    }
+    .transaction-box strong {
+      color: #1b263b;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .details {
+      margin-bottom: 20px;
+    }
+    .detail-row {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label {
+      color: #64748b;
+      width: 140px;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .detail-value {
+      color: #1b263b;
+      font-size: 14px;
+    }
+    .detail-value.important {
+      font-weight: 600;
+    }
+    .notice {
+      background: #fef9c3;
+      border: 1px solid #eab308;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+    .notice h3 {
+      color: #92400e;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .notice ol {
+      color: #92400e;
+      font-size: 12px;
+      padding-left: 20px;
+      line-height: 1.6;
+    }
+    .footer {
+      background: #1b263b;
+      color: white;
+      padding: 16px;
+      text-align: center;
+    }
+    .footer p {
+      font-size: 11px;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+    .print-btn {
+      display: block;
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 12px;
+      background: #1b263b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .print-btn:hover {
+      background: #2d3a52;
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt">
+    <div class="header">
+      <div class="chakra"></div>
+      <h1>ELECTVOTE - VOTING RECEIPT</h1>
+      <p>Election Commission of India</p>
+    </div>
+    <div class="divider"></div>
+    <div class="content">
+      <div class="title">
+        <h2>OFFICIAL VOTE CONFIRMATION</h2>
+        <span class="success-badge">✓ VOTE SUCCESSFULLY RECORDED</span>
+      </div>
+      <div class="transaction-box">
+        <label>Transaction ID:</label>
+        <strong>${escapeHtml(data.transactionId)}</strong>
+      </div>
+      <div class="details">
+        <div class="detail-row">
+          <span class="detail-label">Voter Name:</span>
+          <span class="detail-value important">${escapeHtml(data.voterName)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Voter ID:</span>
+          <span class="detail-value">${escapeHtml(data.voterId)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Election:</span>
+          <span class="detail-value important">${escapeHtml(data.electionTitle)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Candidate Voted:</span>
+          <span class="detail-value important">${escapeHtml(data.candidateName)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Party:</span>
+          <span class="detail-value">${escapeHtml(data.candidateParty)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Date:</span>
+          <span class="detail-value">${escapeHtml(dateStr)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Time:</span>
+          <span class="detail-value">${escapeHtml(timeStr)}</span>
+        </div>
+      </div>
+      <div class="notice">
+        <h3>IMPORTANT NOTICE</h3>
+        <ol>
+          <li>This receipt confirms your vote has been securely recorded.</li>
+          <li>Keep this receipt for your personal records only.</li>
+          <li>Your vote is anonymous and cannot be traced back to you.</li>
+          <li>For any queries, contact your local election office.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="footer">
+      <p><strong>ElectVote - Secure Digital Voting Platform</strong></p>
+      <p>Election Commission of India<br>
+      Nirvachan Sadan, Ashoka Road, New Delhi - 110001<br>
+      www.eci.gov.in | Helpline: 1950</p>
+    </div>
+  </div>
+  <button class="print-btn no-print" onclick="window.print(); return false;">🖨️ Print / Save as PDF</button>
+  <script>
+    // Auto-trigger print dialog
+    window.onload = function() {
+      window.print();
+    };
+  </script>
+</body>
+</html>
+  `;
+
+  // Open in new window for printing
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  }
+}
+
+// HTML escape to prevent XSS
+function escapeHtml(text: string): string {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
