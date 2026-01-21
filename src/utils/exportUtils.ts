@@ -1,5 +1,3 @@
-import jsPDF from "jspdf";
-
 interface Candidate {
   id: string;
   name: string;
@@ -17,6 +15,13 @@ interface Election {
   voterCount: number;
   votesCast: number;
   status: string;
+}
+
+// HTML escape to prevent XSS
+function escapeHtml(text: string): string {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Export results as CSV
@@ -57,102 +62,209 @@ export function exportResultsCSV(candidates: Candidate[], election: Election): v
   URL.revokeObjectURL(link.href);
 }
 
-// Export results as PDF
+// Export results as printable HTML (replaces vulnerable jspdf)
 export function exportResultsPDF(candidates: Candidate[], election: Election): void {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
   const totalVotes = candidates.reduce((acc, c) => acc + c.voteCount, 0);
   
-  // Header
-  doc.setFillColor(27, 38, 59);
-  doc.rect(0, 0, pageWidth, 40, "F");
-  
-  doc.setFontSize(16);
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.text("ELECTION RESULTS REPORT", pageWidth / 2, 18, { align: "center" });
-  
-  doc.setFontSize(10);
-  doc.text(election.title, pageWidth / 2, 28, { align: "center" });
-  doc.setFontSize(8);
-  doc.text(`Generated on: ${new Date().toLocaleString()}`, pageWidth / 2, 36, { align: "center" });
-  
-  // Election Summary Box
-  doc.setFillColor(241, 245, 249);
-  doc.roundedRect(15, 50, pageWidth - 30, 35, 3, 3, "F");
-  
-  doc.setFontSize(10);
-  doc.setTextColor(27, 38, 59);
-  doc.setFont("helvetica", "bold");
-  doc.text("Election Summary", 20, 60);
-  
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.text(`Period: ${election.startDate} - ${election.endDate}`, 20, 70);
-  doc.text(`Total Voters: ${election.voterCount.toLocaleString()}`, 20, 78);
-  doc.text(`Votes Cast: ${election.votesCast.toLocaleString()}`, 110, 70);
-  doc.text(`Turnout: ${election.voterCount > 0 ? ((election.votesCast / election.voterCount) * 100).toFixed(1) : 0}%`, 110, 78);
-  
-  // Results Table Header
-  let yPos = 100;
-  doc.setFillColor(27, 38, 59);
-  doc.rect(15, yPos, pageWidth - 30, 10, "F");
-  
-  doc.setFontSize(9);
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.text("Rank", 20, yPos + 7);
-  doc.text("Candidate", 40, yPos + 7);
-  doc.text("Party", 100, yPos + 7);
-  doc.text("Votes", 150, yPos + 7);
-  doc.text("%", 180, yPos + 7);
-  
-  // Sort and add candidate rows
-  yPos += 15;
   const sortedCandidates = [...candidates]
     .filter(c => c.status === "approved")
     .sort((a, b) => b.voteCount - a.voteCount);
-  
-  sortedCandidates.forEach((candidate, index) => {
+
+  const candidateRows = sortedCandidates.map((candidate, index) => {
     const percentage = totalVotes > 0 ? ((candidate.voteCount / totalVotes) * 100).toFixed(1) : "0.0";
-    
-    // Alternate row colors
-    if (index % 2 === 0) {
-      doc.setFillColor(248, 250, 252);
-      doc.rect(15, yPos - 5, pageWidth - 30, 10, "F");
+    const isWinner = index === 0;
+    return `
+      <tr class="${isWinner ? 'winner' : ''} ${index % 2 === 0 ? 'even' : ''}">
+        <td>${index + 1}${isWinner ? ' 🏆' : ''}</td>
+        <td>${escapeHtml(candidate.name)}</td>
+        <td>${escapeHtml(candidate.party)}</td>
+        <td>${candidate.voteCount.toLocaleString()}</td>
+        <td>${percentage}%</td>
+      </tr>
+    `;
+  }).join('');
+
+  const turnout = election.voterCount > 0 
+    ? ((election.votesCast / election.voterCount) * 100).toFixed(1) 
+    : '0';
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Election Results - ${escapeHtml(election.title)}</title>
+  <style>
+    @media print {
+      body { margin: 0; }
+      .no-print { display: none !important; }
     }
-    
-    // Winner highlight
-    if (index === 0) {
-      doc.setFillColor(254, 249, 195);
-      doc.rect(15, yPos - 5, pageWidth - 30, 10, "F");
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
     }
-    
-    doc.setTextColor(27, 38, 59);
-    doc.setFont("helvetica", index === 0 ? "bold" : "normal");
-    doc.setFontSize(9);
-    
-    doc.text(`${index + 1}${index === 0 ? " 🏆" : ""}`, 20, yPos);
-    doc.text(candidate.name.substring(0, 25), 40, yPos);
-    doc.text(candidate.party.substring(0, 20), 100, yPos);
-    doc.text(candidate.voteCount.toLocaleString(), 150, yPos);
-    doc.text(`${percentage}%`, 180, yPos);
-    
-    yPos += 10;
-  });
-  
-  // Footer
-  const footerY = doc.internal.pageSize.getHeight() - 20;
-  doc.setDrawColor(200, 200, 200);
-  doc.line(15, footerY - 5, pageWidth - 15, footerY - 5);
-  
-  doc.setFontSize(8);
-  doc.setTextColor(100, 100, 100);
-  doc.text("ElectVote - Official Election Results", pageWidth / 2, footerY, { align: "center" });
-  doc.text("This is a computer-generated document.", pageWidth / 2, footerY + 6, { align: "center" });
-  
-  // Save PDF
-  doc.save(`election-results-${election.id}-${new Date().toISOString().split("T")[0]}.pdf`);
+    .report {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .header {
+      background: #1b263b;
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .header h2 {
+      font-size: 14px;
+      font-weight: normal;
+      opacity: 0.9;
+    }
+    .header .timestamp {
+      font-size: 11px;
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+    .summary {
+      background: #f1f5f9;
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .summary-item {
+      text-align: center;
+    }
+    .summary-item label {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .summary-item value {
+      display: block;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1b263b;
+    }
+    .content {
+      padding: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      background: #1b263b;
+      color: white;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 12px;
+      font-size: 13px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    tr.even {
+      background: #f8fafc;
+    }
+    tr.winner {
+      background: #fef9c3 !important;
+      font-weight: 600;
+    }
+    .footer {
+      background: #f8fafc;
+      padding: 16px 24px;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+    }
+    .footer p {
+      font-size: 11px;
+      color: #64748b;
+    }
+    .print-btn {
+      display: block;
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 12px;
+      background: #1b263b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .print-btn:hover {
+      background: #2d3a52;
+    }
+  </style>
+</head>
+<body>
+  <div class="report">
+    <div class="header">
+      <h1>ELECTION RESULTS REPORT</h1>
+      <h2>${escapeHtml(election.title)}</h2>
+      <p class="timestamp">Generated on: ${new Date().toLocaleString()}</p>
+    </div>
+    <div class="summary">
+      <div class="summary-item">
+        <label>Period</label>
+        <value>${escapeHtml(election.startDate)} - ${escapeHtml(election.endDate)}</value>
+      </div>
+      <div class="summary-item">
+        <label>Total Voters</label>
+        <value>${election.voterCount.toLocaleString()}</value>
+      </div>
+      <div class="summary-item">
+        <label>Votes Cast</label>
+        <value>${election.votesCast.toLocaleString()}</value>
+      </div>
+      <div class="summary-item">
+        <label>Turnout</label>
+        <value>${turnout}%</value>
+      </div>
+    </div>
+    <div class="content">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Candidate</th>
+            <th>Party</th>
+            <th>Votes</th>
+            <th>%</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${candidateRows}
+        </tbody>
+      </table>
+    </div>
+    <div class="footer">
+      <p><strong>ElectVote - Official Election Results</strong></p>
+      <p>This is a computer-generated document.</p>
+    </div>
+  </div>
+  <button class="print-btn no-print" onclick="window.print(); return false;">🖨️ Print / Save as PDF</button>
+</body>
+</html>
+  `;
+
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  }
 }
 
 // Export voter data (for admin)
