@@ -32,7 +32,7 @@ jobs:
         run: cp -f ./dist/index.html ./dist/404.html || true
 
       - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist
 
@@ -41,4 +41,4 @@ jobs:
     needs: build
     steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
