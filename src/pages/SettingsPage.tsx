@@ -330,7 +330,10 @@ export default function SettingsPage() {
         >
           <Button 
             variant="destructive" 
-            onClick={logout} 
+            onClick={async () => {
+              await logout();
+              window.location.href = "/";
+            }} 
             size="lg"
             className="sm:w-auto"
           >

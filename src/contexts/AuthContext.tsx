@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 
 export type UserRole = "super_admin" | "admin" | "voter";
 
@@ -14,91 +16,190 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string, role?: UserRole) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   switchRole: (role: UserRole) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demo
-const mockUsers: Record<string, User> = {
-  "super@electvote.com": {
-    id: "1",
-    name: "मुख्य प्रशासक",
-    email: "super@electvote.com",
-    role: "super_admin",
-  },
-  "admin@electvote.com": {
-    id: "2",
-    name: "चुनाव प्रशासक",
-    email: "admin@electvote.com",
-    role: "admin",
-  },
-  "voter@electvote.com": {
-    id: "3",
-    name: "राहुल वर्मा",
-    email: "voter@electvote.com",
-    role: "voter",
-  },
-};
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    const stored = localStorage.getItem("electvote_user");
-    return stored ? JSON.parse(stored) : null;
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = useCallback(async (email: string, _password: string, role?: UserRole): Promise<boolean> => {
-    setIsLoading(true);
-    
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // For demo: any email works, role determines access
-    const mockUser: User = mockUsers[email] || {
-      id: Math.random().toString(36).substr(2, 9),
-      name: email.split("@")[0].replace(/[.]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-      email,
-      role: role || "voter",
-    };
-    
-    setUser(mockUser);
-    localStorage.setItem("electvote_user", JSON.stringify(mockUser));
-    setIsLoading(false);
-    return true;
+  // Fetch user profile and role from database
+  const fetchUserProfile = useCallback(async (supabaseUser: SupabaseUser): Promise<User | null> => {
+    try {
+      // Fetch voter profile
+      const { data: voter, error: voterError } = await supabase
+        .from("voters")
+        .select("*")
+        .eq("id", supabaseUser.id)
+        .maybeSingle();
+
+      // Fetch user role
+      const { data: roleData, error: roleError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", supabaseUser.id)
+        .maybeSingle();
+
+      if (voterError) {
+        console.error("Error fetching voter profile:", voterError);
+      }
+      if (roleError) {
+        console.error("Error fetching user role:", roleError);
+      }
+
+      const role = (roleData?.role as UserRole) || "voter";
+      const fullName = voter?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email?.split("@")[0] || "User";
+
+      return {
+        id: supabaseUser.id,
+        name: fullName,
+        email: supabaseUser.email || "",
+        role,
+        avatar: supabaseUser.user_metadata?.avatar_url,
+      };
+    } catch (error) {
+      console.error("Error in fetchUserProfile:", error);
+      return null;
+    }
   }, []);
 
-  const register = useCallback(async (name: string, email: string, _password: string): Promise<boolean> => {
+  // Initialize auth state
+  useEffect(() => {
+    let mounted = true;
+
+    const initAuth = async () => {
+      try {
+        // Set up auth state listener FIRST
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          if (!mounted) return;
+
+          if (session?.user) {
+            // Use setTimeout to avoid potential deadlock with Supabase client
+            setTimeout(async () => {
+              if (!mounted) return;
+              const profile = await fetchUserProfile(session.user);
+              if (mounted) {
+                setUser(profile);
+                setIsLoading(false);
+              }
+            }, 0);
+          } else {
+            setUser(null);
+            setIsLoading(false);
+          }
+        });
+
+        // THEN get the current session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user && mounted) {
+          const profile = await fetchUserProfile(session.user);
+          if (mounted) {
+            setUser(profile);
+          }
+        }
+        
+        if (mounted) {
+          setIsLoading(false);
+        }
+
+        return () => {
+          mounted = false;
+          subscription.unsubscribe();
+        };
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initAuth();
+
+    return () => {
+      mounted = false;
+    };
+  }, [fetchUserProfile]);
+
+  const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error("Login error:", error.message);
+        setIsLoading(false);
+        return false;
+      }
+
+      if (data.user) {
+        const profile = await fetchUserProfile(data.user);
+        setUser(profile);
+      }
+
+      setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error("Login exception:", error);
+      setIsLoading(false);
+      return false;
+    }
+  }, [fetchUserProfile]);
+
+  const register = useCallback(async (name: string, email: string, password: string): Promise<boolean> => {
+    setIsLoading(true);
     
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      name,
-      email,
-      role: "voter", // New registrations are voters by default
-    };
-    
-    setUser(newUser);
-    localStorage.setItem("electvote_user", JSON.stringify(newUser));
-    setIsLoading(false);
-    return true;
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+          emailRedirectTo: window.location.origin,
+        },
+      });
+
+      if (error) {
+        console.error("Registration error:", error.message);
+        setIsLoading(false);
+        return false;
+      }
+
+      // Note: User needs to verify email before they can sign in
+      // The trigger will auto-create their profile when they verify
+      setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error("Registration exception:", error);
+      setIsLoading(false);
+      return false;
+    }
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    setIsLoading(true);
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem("electvote_user");
+    setIsLoading(false);
   }, []);
 
   const switchRole = useCallback((role: UserRole) => {
+    // Note: In production, role switching should only be allowed for super_admins
+    // and should update the database. For now, this is a local-only operation.
     if (user) {
-      const updatedUser = { ...user, role };
-      setUser(updatedUser);
-      localStorage.setItem("electvote_user", JSON.stringify(updatedUser));
+      setUser({ ...user, role });
     }
   }, [user]);
 
