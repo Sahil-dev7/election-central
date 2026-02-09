@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Code, Github, Linkedin, Mail, Vote, Star, Award, Sparkles, Heart, Users } from "lucide-react";
+import { ArrowLeft, Code, Github, Linkedin, Mail, Vote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -22,7 +22,6 @@ const developers = [
     photo: devSahilImg,
     tagline: "Turning ideas into reality, one line of code at a time",
     taglineHi: "कोड की एक-एक लाइन से सपनों को साकार करना",
-    isLead: true,
   },
   {
     name: "Roshan Sharma",
@@ -32,7 +31,6 @@ const developers = [
     photo: devRoshanImg,
     tagline: "Building strong foundations for seamless experiences",
     taglineHi: "बेहतरीन अनुभव के लिए मजबूत नींव रखना",
-    isLead: false,
   },
   {
     name: "Sakshi Kachre",
@@ -42,7 +40,6 @@ const developers = [
     photo: devSakshiImg,
     tagline: "Designing experiences that users love",
     taglineHi: "ऐसे अनुभव डिज़ाइन करना जो उपयोगकर्ता पसंद करें",
-    isLead: false,
   },
   {
     name: "Rishika Yadav",
@@ -52,7 +49,6 @@ const developers = [
     photo: devRishikaImg,
     tagline: "Crafting pixels into beautiful interfaces",
     taglineHi: "पिक्सल को खूबसूरत इंटरफेस में बदलना",
-    isLead: false,
   },
 ];
 
@@ -65,9 +61,6 @@ export default function DevelopersPage() {
     setLightboxImage({ src, alt });
     setLightboxOpen(true);
   };
-
-  const leadDev = developers[0];
-  const teamMembers = developers.slice(1);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -104,139 +97,26 @@ export default function DevelopersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="text-center mb-10"
           >
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", delay: 0.2 }}
-              className="w-20 h-20 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/30"
-            >
-              <Users className="w-10 h-10 text-white" />
-            </motion.div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              {language === "hi" ? "हमारी प्रतिभाशाली टीम" : "Meet Our Brilliant Team"}
+              {language === "hi" ? "डेवलपर्स" : "Developers"}
             </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               {language === "hi" 
-                ? "चार प्रतिभाशाली डेवलपर्स जिन्होंने अपनी मेहनत, लगन और समर्पण से ElectVote को साकार किया। यह प्रोजेक्ट उनकी अथक मेहनत का परिणाम है।"
-                : "Four talented developers who brought ElectVote to life through their hard work, dedication, and countless hours of coding. This project is a result of their tireless efforts and passion."}
+                ? "ElectVote को बनाने वाली टीम"
+                : "The team behind ElectVote"}
             </p>
           </motion.div>
 
-          {/* Team Quote */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mb-12 text-center"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-              <Heart className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">
-                {language === "hi" 
-                  ? "एकता में शक्ति, कोड में जुनून"
-                  : "Unity in Strength, Passion in Code"}
-              </span>
-              <Heart className="w-4 h-4 text-primary" />
-            </div>
-          </motion.div>
-
-          {/* Lead Developer - Featured Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-10"
-          >
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-card to-primary/5 border-2 border-primary/30 p-8 md:p-10">
-              {/* Decorative Elements */}
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1 text-xs font-semibold">
-                  <Star className="w-3 h-3 mr-1" />
-                  {language === "hi" ? "प्रोजेक्ट लीड" : "Project Lead"}
-                </Badge>
-              </div>
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-              <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-              
-              <div className="relative flex flex-col md:flex-row gap-8 items-center md:items-start">
-                {/* Photo */}
-                <div 
-                  className="relative cursor-pointer group"
-                  onClick={() => openImageLightbox(leadDev.photo, leadDev.name)}
-                >
-                  <div className="w-40 h-40 rounded-2xl overflow-hidden border-4 border-primary/30 shadow-2xl shadow-primary/20 group-hover:border-primary/50 transition-all">
-                    <img 
-                      src={leadDev.photo} 
-                      alt={leadDev.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                    <Award className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
-                    {language === "hi" ? leadDev.nameHi : leadDev.name}
-                  </h2>
-                  <p className="text-primary font-semibold mb-3">
-                    {language === "hi" ? leadDev.roleHi : leadDev.role}
-                  </p>
-                  <p className="text-muted-foreground italic text-sm">
-                    "{language === "hi" ? leadDev.taglineHi : leadDev.tagline}"
-                  </p>
-
-                  {/* Social Links */}
-                  <div className="flex items-center gap-3 mt-6 justify-center md:justify-start">
-                    <Button variant="outline" size="icon" className="h-10 w-10 rounded-full">
-                      <Github className="w-5 h-5" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="h-10 w-10 rounded-full">
-                      <Linkedin className="w-5 h-5" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className="h-10 w-10 rounded-full"
-                      onClick={() => window.open("mailto:sahilwadhwani712@gmail.com")}
-                    >
-                      <Mail className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Team Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-center mb-8"
-          >
-            <h3 className="text-xl font-bold text-foreground mb-2">
-              {language === "hi" ? "टीम के सदस्य" : "Team Members"}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {language === "hi" 
-                ? "साथ मिलकर बड़े सपनों को साकार करने वाले"
-                : "Together, making big dreams come true"}
-            </p>
-          </motion.div>
-
-          {/* Team Members Grid */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {teamMembers.map((dev, i) => (
+          {/* All Developers Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {developers.map((dev, i) => (
               <motion.div
                 key={dev.name}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + i * 0.1 }}
+                transition={{ delay: 0.2 + i * 0.1 }}
                 className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 hover:shadow-lg transition-all"
               >
                 <div 
