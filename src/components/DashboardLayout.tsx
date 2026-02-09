@@ -53,11 +53,12 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
 
   // Show user's name if logged in, otherwise show "User"
   const displayName = user?.name || userName || "User";
+  const displayEmail = user?.email || "";
 
   const navItems = userRole === "admin" || userRole === "super_admin" ? adminNavItems : voterNavItems;
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
 
@@ -148,7 +149,7 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
               {!isCollapsed && (
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-sidebar-foreground truncate">{displayName}</p>
-                  <p className="text-xs text-sidebar-foreground/60 truncate">View profile</p>
+                  <p className="text-xs text-sidebar-foreground/60 truncate">{displayEmail}</p>
                 </div>
               )}
               {!isCollapsed && (

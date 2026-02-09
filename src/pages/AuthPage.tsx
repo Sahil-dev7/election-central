@@ -10,29 +10,19 @@ import {
   EyeOff, 
   ArrowRight,
   Shield,
-  CheckCircle2,
-  Users,
-  Crown
+  CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth, UserRole } from "@/contexts/AuthContext";
-import { cn } from "@/lib/utils";
-
-const demoAccounts = [
-  { role: "super_admin" as UserRole, email: "super@electvote.com", label: "Super Admin", icon: Crown, description: "Full system control" },
-  { role: "admin" as UserRole, email: "admin@electvote.com", label: "Admin", icon: Shield, description: "Manage elections" },
-  { role: "voter" as UserRole, email: "voter@electvote.com", label: "Voter", icon: Users, description: "Cast votes" },
-];
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthPage() {
   const [searchParams] = useSearchParams();
   const isRegister = searchParams.get("mode") === "register";
   const [mode, setMode] = useState<"login" | "register">(isRegister ? "register" : "login");
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const { login, register, isLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -44,45 +34,70 @@ export default function AuthPage() {
     confirmPassword: "",
   });
 
-  const handleDemoLogin = async (role: UserRole, email: string) => {
-    setSelectedRole(role);
-    const success = await login(email, "demo123", role);
-    
-    if (success) {
-      toast({
-        title: "Welcome to ElectVote!",
-        description: `Logged in as ${role.replace("_", " ").toUpperCase()}`,
-      });
-      
-      // Redirect based on role
-      if (role === "super_admin") {
-        navigate("/super-admin");
-      } else if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
-    }
-    setSelectedRole(null);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (mode === "register" && formData.password !== formData.confirmPassword) {
+    if (!formData.email || !formData.password) {
       toast({
-        title: "Passwords don't match",
-        description: "Please ensure your passwords match.",
+        title: "Missing fields",
+        description: "Please fill in all required fields.",
         variant: "destructive",
       });
       return;
     }
 
+    if (mode === "register") {
+      if (!formData.fullName) {
+        toast({
+          title: "Name required",
+          description: "Please enter your full name.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (formData.password !== formData.confirmPassword) {
+        toast({
+          title: "Passwords don't match",
+          description: "Please ensure your passwords match.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (formData.password.length < 6) {
+        toast({
+          title: "Password too short",
+          description: "Password must be at least 6 characters.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     let success = false;
     if (mode === "login") {
       success = await login(formData.email, formData.password);
+      
+      if (!success) {
+        toast({
+          title: "Login failed",
+          description: "Invalid email or password. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
     } else {
       success = await register(formData.fullName, formData.email, formData.password);
+      
+      if (!success) {
+        toast({
+          title: "Registration failed",
+          description: "Unable to create account. Email may already be registered.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     if (success) {
@@ -90,9 +105,15 @@ export default function AuthPage() {
         title: mode === "login" ? "Welcome back!" : "Account created!",
         description: mode === "login" 
           ? "You've been successfully logged in." 
-          : "Your account has been created successfully.",
+          : "Please check your email to verify your account before signing in.",
       });
-      navigate("/dashboard");
+      
+      if (mode === "login") {
+        navigate("/dashboard");
+      } else {
+        // After registration, prompt user to check email
+        setMode("login");
+      }
     }
   };
 
@@ -112,35 +133,6 @@ export default function AuthPage() {
             </div>
             <span className="text-xl font-bold text-foreground">ElectVote</span>
           </Link>
-
-          {/* Demo Quick Access */}
-          <div className="mb-8 p-4 rounded-xl bg-secondary/50 border border-border">
-            <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-election-gold animate-pulse" />
-              Quick Demo Access
-            </h3>
-            <div className="grid grid-cols-3 gap-2">
-              {demoAccounts.map((account) => (
-                <Button
-                  key={account.role}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDemoLogin(account.role, account.email)}
-                  disabled={isLoading}
-                  className={cn(
-                    "flex-col h-auto py-3 gap-1",
-                    selectedRole === account.role && "border-election-gold bg-election-gold/10"
-                  )}
-                >
-                  <account.icon className="w-4 h-4" />
-                  <span className="text-xs font-medium">{account.label}</span>
-                </Button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Click to instantly log in with demo credentials
-            </p>
-          </div>
 
           {/* Header */}
           <div className="mb-6">
@@ -164,11 +156,11 @@ export default function AuthPage() {
                   <Input
                     id="fullName"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Enter your full name"
                     className="pl-10 h-11"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    required
+                    required={mode === "register"}
                   />
                 </div>
               </div>
@@ -181,7 +173,7 @@ export default function AuthPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="Enter your email"
                   className="pl-10 h-11"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -197,7 +189,7 @@ export default function AuthPage() {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   className="pl-10 pr-10 h-11"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -221,7 +213,7 @@ export default function AuthPage() {
                   <Input
                     id="confirmPassword"
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder="Confirm your password"
                     className="pl-10 h-11"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
