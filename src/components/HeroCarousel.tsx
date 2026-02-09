@@ -16,6 +16,14 @@ interface CarouselSlide {
 const slides: CarouselSlide[] = [
   {
     id: 1,
+    image: "https://indianexpress.com/wp-content/uploads/2025/06/Delhi-BJP.png",
+    altEn: "Delhi BJP Leadership",
+    altHi: "दिल्ली भाजपा नेतृत्व",
+    captionEn: "Delhi BJP Leadership",
+    captionHi: "दिल्ली भाजपा नेतृत्व",
+  },
+  {
+    id: 2,
     image: "https://cdn.siasat.com/wp-content/uploads/2024/06/PM-modi-and-Italian-counterpart-Giorgia-Meloni--660x495.jpg",
     altEn: "PM Modi at International Summit",
     altHi: "प्रधानमंत्री मोदी अंतर्राष्ट्रीय सम्मेलन में",
@@ -23,7 +31,7 @@ const slides: CarouselSlide[] = [
     captionHi: "भारत-इटली द्विपक्षीय वार्ता",
   },
   {
-    id: 2,
+    id: 3,
     image: "https://akm-img-a-in.tosshub.com/aajtak/images/story/201703/modi_copy_1490769181_749x421.jpeg",
     altEn: "PM Modi's Address",
     altHi: "प्रधानमंत्री का संबोधन",
@@ -31,7 +39,7 @@ const slides: CarouselSlide[] = [
     captionHi: "मित्रों, आपका स्वागत है",
   },
   {
-    id: 3,
+    id: 4,
     image: "https://images.bhaskarassets.com/thumb/1200x900/web2images/521/2022/09/07/renaissance-730x548-1_1662533070.jpg",
     altEn: "Swapnil Kothari - Congress Leader",
     altHi: "स्वप्निल कोठारी - कांग्रेस नेता",
@@ -39,7 +47,7 @@ const slides: CarouselSlide[] = [
     captionHi: "युवा राजनीति",
   },
   {
-    id: 4,
+    id: 5,
     image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200&h=800&fit=crop",
     altEn: "Digital India Initiative",
     altHi: "डिजिटल भारत पहल",
