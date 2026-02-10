@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { 
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AuthPage() {
   const [searchParams] = useSearchParams();
@@ -26,6 +27,7 @@ export default function AuthPage() {
   const { login, register, isLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -137,12 +139,12 @@ export default function AuthPage() {
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              {mode === "login" ? "Welcome back" : "Create an account"}
+              {mode === "login" ? t("auth.welcomeBack") : t("auth.createAccount")}
             </h1>
             <p className="text-muted-foreground text-sm">
               {mode === "login" 
-                ? "Enter your credentials to access your account" 
-                : "Join thousands of voters making their voices heard"}
+                ? t("auth.enterCredentials") 
+                : t("auth.joinVoters")}
             </p>
           </div>
 
@@ -150,7 +152,7 @@ export default function AuthPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">{t("auth.fullName")}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -167,7 +169,7 @@ export default function AuthPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -183,7 +185,7 @@ export default function AuthPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -207,7 +209,7 @@ export default function AuthPage() {
 
             {mode === "register" && (
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">{t("auth.confirmPassword")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -229,7 +231,7 @@ export default function AuthPage() {
                   to="/forgot-password" 
                   className="text-sm text-election-blue hover:underline"
                 >
-                  Forgot password?
+                  {t("auth.forgotPassword")}
                 </Link>
               </div>
             )}
@@ -249,22 +251,89 @@ export default function AuthPage() {
                 />
               ) : (
                 <>
-                  {mode === "login" ? "Sign In" : "Create Account"}
+                  {mode === "login" ? t("auth.signIn") : t("auth.createAccountBtn")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </>
               )}
             </Button>
           </form>
 
+          {/* Demo Quick Login Buttons */}
+          {mode === "login" && (
+            <div className="mt-6 pt-4 border-t border-border">
+              <p className="text-xs text-muted-foreground text-center mb-3">{t("auth.quickDemo")}</p>
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-xs h-9 border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-600"
+                  disabled={isLoading}
+                  onClick={() => {
+                    setFormData({ ...formData, email: "voter@electvote.demo", password: "voter123" });
+                    setTimeout(() => {
+                      login("voter@electvote.demo", "voter123").then((success) => {
+                        if (success) navigate("/dashboard");
+                        else toast({ title: "Login failed", variant: "destructive" });
+                      });
+                    }, 100);
+                  }}
+                >
+                  <Vote className="w-3 h-3 mr-1" />
+                  Voter
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-xs h-9 border-blue-500/30 hover:bg-blue-500/10 text-blue-600"
+                  disabled={isLoading}
+                  onClick={() => {
+                    setFormData({ ...formData, email: "admin@electvote.demo", password: "admin123" });
+                    setTimeout(() => {
+                      login("admin@electvote.demo", "admin123").then((success) => {
+                        if (success) navigate("/admin");
+                        else toast({ title: "Login failed", variant: "destructive" });
+                      });
+                    }, 100);
+                  }}
+                >
+                  <Shield className="w-3 h-3 mr-1" />
+                  Admin
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-xs h-9 border-purple-500/30 hover:bg-purple-500/10 text-purple-600"
+                  disabled={isLoading}
+                  onClick={() => {
+                    setFormData({ ...formData, email: "superadmin@electvote.demo", password: "super123" });
+                    setTimeout(() => {
+                      login("superadmin@electvote.demo", "super123").then((success) => {
+                        if (success) navigate("/super-admin");
+                        else toast({ title: "Login failed", variant: "destructive" });
+                      });
+                    }, 100);
+                  }}
+                >
+                  <Lock className="w-3 h-3 mr-1" />
+                  Super Admin
+                </Button>
+              </div>
+            </div>
+          )}
+
+
           {/* Toggle mode */}
           <p className="mt-6 text-center text-muted-foreground text-sm">
-            {mode === "login" ? "Don't have an account? " : "Already have an account? "}
+            {mode === "login" ? t("auth.noAccount") + " " : t("auth.haveAccount") + " "}
             <button
               type="button"
               onClick={() => setMode(mode === "login" ? "register" : "login")}
               className="text-election-blue font-medium hover:underline"
             >
-              {mode === "login" ? "Sign up" : "Sign in"}
+              {mode === "login" ? t("auth.signUp") : t("auth.signInLink")}
             </button>
           </p>
 
@@ -305,10 +374,10 @@ export default function AuthPage() {
               <Vote className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-white mb-4 text-center">
-              Your Vote Matters
+              {t("auth.yourVoteMatters")}
             </h2>
             <p className="text-white/80 max-w-sm text-center leading-relaxed">
-              Join millions of voters who trust ElectVote for secure, transparent, and accessible elections.
+              {t("auth.joinMillions")}
             </p>
 
             {/* Feature list */}

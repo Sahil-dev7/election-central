@@ -12,13 +12,14 @@ import devSahilImg from "@/assets/dev-sahil.jpg";
 import devRoshanImg from "@/assets/dev-roshan.jpg";
 import devSakshiImg from "@/assets/dev-sakshi.jpg";
 import devRishikaImg from "@/assets/dev-rishika.jpg";
+import renaissanceLogo from "@/assets/renaissance-logo.jpg";
 
 const developers = [
   {
     name: "Sahil Wadhwani",
     nameHi: "साहिल वाधवानी",
-    role: "Full Stack Developer",
-    roleHi: "फुल स्टैक डेवलपर",
+    role: "TypeScript Developer",
+    roleHi: "टाइपस्क्रिप्ट डेवलपर",
     photo: devSahilImg,
     tagline: "Turning ideas into reality, one line of code at a time",
     taglineHi: "कोड की एक-एक लाइन से सपनों को साकार करना",
@@ -165,7 +166,9 @@ export default function DevelopersPage() {
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-election-navy to-primary/80 p-8 text-center">
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMjBMNDAgMjBMNDAgNDBMMjAgNDBMMjAgMjBaIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDMpIi8+PC9zdmc+')] opacity-50" />
               <div className="relative">
-                <Code className="w-12 h-12 text-white/80 mx-auto mb-4" />
+                <div className="w-20 h-20 rounded-xl overflow-hidden mx-auto mb-4 border-2 border-white/20">
+                  <img src={renaissanceLogo} alt="Renaissance University" className="w-full h-full object-cover" />
+                </div>
                 <h2 className="text-2xl font-bold text-white mb-2">
                   {language === "hi" ? "रेनेसां विश्वविद्यालय, इंदौर" : "Renaissance University, Indore"}
                 </h2>
