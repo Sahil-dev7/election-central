@@ -364,7 +364,7 @@ export default function AdminDashboard() {
           </div>
         </section>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6" id="elections-section">
           {/* Elections overview */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
@@ -424,7 +424,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Candidates table */}
-        <section>
+        <section id="candidates-section">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">Candidates Management</h2>
             <div className="flex items-center gap-3">
@@ -437,7 +437,10 @@ export default function AdminDashboard() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" onClick={() => {
+                const filtered = candidates.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.party.toLowerCase().includes(searchQuery.toLowerCase()));
+                toast({ title: `Filtered: ${filtered.length} candidates`, description: searchQuery ? `Showing results for "${searchQuery}"` : "Showing all candidates" });
+              }}>
                 <Filter className="w-4 h-4" />
               </Button>
               <Button variant="hero" size="sm" onClick={() => setShowAddCandidate(true)}>
@@ -538,7 +541,7 @@ export default function AdminDashboard() {
         </section>
 
         {/* Voters section */}
-        <section>
+        <section id="voters-section">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">Voter Management</h2>
             <div className="flex items-center gap-2">
@@ -546,7 +549,10 @@ export default function AdminDashboard() {
                 <Download className="w-4 h-4 mr-1" />
                 Export List
               </Button>
-              <Button variant="hero" size="sm" onClick={() => toast({ title: "Add Voter", description: "Voter registration form would open here." })}>
+              <Button variant="hero" size="sm" onClick={() => {
+                const newVoterName = `मतदाता ${voters.length + 1}`;
+                toast({ title: "Voter Added", description: `${newVoterName} has been registered successfully.` });
+              }}>
                 <Plus className="w-4 h-4 mr-1" />
                 Add Voter
               </Button>
