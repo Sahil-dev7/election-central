@@ -1,4 +1,10 @@
 import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -28,21 +34,21 @@ interface DashboardLayoutProps {
 }
 
 const adminNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
-  { icon: Calendar, label: "Elections", path: "/admin" },
-  { icon: Users, label: "Candidates", path: "/admin" },
-  { icon: Users, label: "Voters", path: "/admin" },
-  { icon: BarChart3, label: "Results", path: "/results" },
-  { icon: FileText, label: "Audit Logs", path: "/audit-logs" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/admin", hash: "" },
+  { icon: Calendar, label: "Elections", path: "/admin", hash: "#elections-section" },
+  { icon: Users, label: "Candidates", path: "/admin", hash: "#candidates-section" },
+  { icon: Users, label: "Voters", path: "/admin", hash: "#voters-section" },
+  { icon: BarChart3, label: "Results", path: "/results", hash: "" },
+  { icon: FileText, label: "Audit Logs", path: "/audit-logs", hash: "" },
+  { icon: Settings, label: "Settings", path: "/settings", hash: "" },
 ];
 
 const voterNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: Vote, label: "Vote Now", path: "/dashboard" },
-  { icon: BarChart3, label: "Results", path: "/results" },
-  { icon: Calendar, label: "History", path: "/dashboard" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", hash: "" },
+  { icon: Vote, label: "Vote Now", path: "/dashboard", hash: "#voting-section" },
+  { icon: BarChart3, label: "Results", path: "/results", hash: "" },
+  { icon: Calendar, label: "History", path: "/dashboard", hash: "#voting-history" },
+  { icon: Settings, label: "Settings", path: "/settings", hash: "" },
 ];
 
 export function DashboardLayout({ children, userRole = "voter", userName = "User" }: DashboardLayoutProps) {
@@ -92,12 +98,20 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
 
           {/* Navigation */}
           <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
+            {navItems.map((item, idx) => {
+              const isActive = location.pathname === item.path && !item.hash;
+              const handleNavClick = (e: React.MouseEvent) => {
+                if (item.hash && location.pathname === item.path) {
+                  e.preventDefault();
+                  const el = document.querySelector(item.hash);
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }
+              };
               return (
                 <Link
-                  key={item.path}
-                  to={item.path}
+                  key={`${item.path}-${idx}`}
+                  to={`${item.path}${item.hash}`}
+                  onClick={handleNavClick}
                   className={cn(
                     "flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200",
                     isActive
@@ -199,10 +213,31 @@ export function DashboardLayout({ children, userRole = "voter", userName = "User
           <div className="flex items-center gap-4">
             <LanguageToggle />
             <GlobalThemeToggle />
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-election-gold" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative">
+                  <Bell className="w-5 h-5" />
+                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-election-gold" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72">
+                <div className="px-3 py-2 border-b border-border">
+                  <p className="text-sm font-semibold">Notifications</p>
+                </div>
+                <DropdownMenuItem className="flex flex-col items-start gap-1 py-2">
+                  <span className="text-sm font-medium">New vote recorded</span>
+                  <span className="text-xs text-muted-foreground">2 min ago</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex flex-col items-start gap-1 py-2">
+                  <span className="text-sm font-medium">Election status updated</span>
+                  <span className="text-xs text-muted-foreground">1 hour ago</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex flex-col items-start gap-1 py-2">
+                  <span className="text-sm font-medium">System backup completed</span>
+                  <span className="text-xs text-muted-foreground">3 hours ago</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
